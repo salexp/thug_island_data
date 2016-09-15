@@ -11,6 +11,7 @@ from copy import deepcopy
 from math import exp
 
 from fantasy_data import league
+from fantasy_data import schedule
 from util import *
 
 #======================================================
@@ -49,8 +50,8 @@ trevor = 'Trevor Watson'
 divisions = ['East', 'West']
 east = [andrew, connor, jimmy, josh, stu]
 west = [ben, cody, eric, rande, tom, trevor]
-OWNERS = [andrew, ben, cody, connor, eric, jimmy, josh, rande, stu, tom, trevor]
-owners = list(OWNERS)
+owners = {}
+owners = [andrew, ben, cody, connor, eric, jimmy, josh, rande, stu, tom, trevor]
 years = ['2010', '2011', '2012', '2013', '2014', '2015']
 num_keepers = {'2010' : 0, '2011' : 2, '2012' : 3, '2013' : 4, '2014' : 5, '2015' : 6, '2016' : 7, '2017' : 8}
 
@@ -140,13 +141,43 @@ def playoff_hopes(_ownrs = owners, file = None):
 #===============End===============
 
 
-def game_analysis(work_book, years):
+def game_analysis(league, work_book, years):
     schedule = {}
     for yi, year in enumerate(years):
-        schedule[year] = league.Schedule(work_book, yi)
+        work_sheet = work_book.sheet_by_index(yi)
+        league.add_schedule(year, work_sheet)
+
+    if False:
+                if name not in team_names.keys(): team_names[name] = ownr
+                self[wek][ownr]['Opponent'] = opp
+                self[wek][ownr]['Opponent Name'] = name_opp
+                self[wek][ownr]['PF'] = scr_own
+                self[wek][ownr]['PA'] = scr_opp
+                self[wek][ownr]['Win'] = scr_own > scr_opp
+                self[wek][ownr]['Tie'] = scr_own == scr_opp
+                self[wek][ownr]['Loss'] = scr_own < scr_opp
+                self[wek][ownr]['Ws'] = ws
+                self[wek][ownr]['Ls'] = ls
+                self[wek][ownr]['Ts'] = ts
+                self[wek][ownr]['Playoff'] = (week == 14 and game < 3 and year == '2010') or (week == 15 and game == 1 and year == '2010') or (week in [14, 15] and game < 3 and year in years[1:]) or (week == 16 and game == 1)
+                self[wek][ownr]['Home'] = False
+                self[wek][opp]['Name'] = name_opp
+                if name_opp not in team_names.keys(): team_names[name_opp] = opp
+                self[wek][opp]['Opponent'] = ownr
+                self[wek][opp]['Opponent Name'] = name
+                self[wek][opp]['PF'] = scr_opp
+                self[wek][opp]['PA'] = scr_own
+                self[wek][opp]['Win'] = scr_opp > scr_own
+                self[wek][opp]['Tie'] = scr_opp == scr_own
+                self[wek][opp]['Loss'] = scr_opp < scr_own
+                self[wek][opp]['Ws'] = ws_opp
+                self[wek][opp]['Ls'] = ls_opp
+                self[wek][opp]['Ts'] = ts_opp
+                self[wek][opp]['Playoff'] = (week == 14 and game < 3 and year == '2010') or (week == 15 and game == 1 and year == '2010') or (week in [14, 15] and game < 3 and year in years[1:]) or (week == 16 and game == 1)
+                self[wek][opp]['Home'] = True
 
     #     # Build draft dictionary
-        draft[year] = {}
+    #     draft[year] = {}
     #     per_rnd = 0
     #     num_kpr = num_keepers[year]
     #     for side in [0, 3]:
@@ -875,20 +906,20 @@ def ranking_analysis():
     last_week = 13
     weeks_left = last_week - int(current_week)
     tf = open('ff_data/top_{}.txt'.format(current_week), 'w')
-    print >> tf, league['Records']['Max All Games']
+    print >> tf, schedule['Records']['Max All Games']
     tf.close()
     ftf = open('ff_data/few_{}.txt'.format(current_week), 'w')
-    print >> ftf, league['Records']['Min All Games']
+    print >> ftf, schedule['Records']['Min All Games']
     ftf.close()
     current_year = years[-1]
-    best_games = add_ranks(league['Records']['Max All Games'], 3)
-    fewest_games = add_ranks(league['Records']['Min All Games'], 3)
-    best_year_games = add_ranks(league['Records'][year]['Max All Games'], 3)
-    fewest_year_games = add_ranks(league['Records'][year]['Min All Games'], 3)
-    league['Records']['Max All Games'] = best_games
-    league['Records']['Min All Games'] = fewest_games
-    league['Records'][year]['Max All Games'] = best_year_games
-    league['Records'][year]['Min All Games'] = fewest_year_games
+    best_games = add_ranks(schedule['Records']['Max All Games'], 3)
+    fewest_games = add_ranks(schedule['Records']['Min All Games'], 3)
+    best_year_games = add_ranks(schedule['Records'][year]['Max All Games'], 3)
+    fewest_year_games = add_ranks(schedule['Records'][year]['Min All Games'], 3)
+    schedule['Records']['Max All Games'] = best_games
+    schedule['Records']['Min All Games'] = fewest_games
+    schedule['Records'][year]['Max All Games'] = best_year_games
+    schedule['Records'][year]['Min All Games'] = fewest_year_games
     for weks in played_weeks:
         metrics[weks] = {}
 
@@ -1507,14 +1538,14 @@ def output_rankings():
     #===============Points Scored===============
 
     print >> f, '[b]Most Points Scored - {}[/b]'.format(years[-1])
-    for game in league['Records'][years[-1]]['Max All Games']:
+    for game in schedule['Records'][years[-1]]['Max All Games']:
         ownr = game[0]
         print >> f, '{4} {0}pts - {1} (Week {3} vs. {5}){6}'.format(game[3], game[0], game[1], game[2], game[4].ljust(4, '.'), schedule[game[1]][game[2]][ownr]['Opponent'].split(' ')[0], '*' if game[2] == current_week else '')
 
     print >> f, ''
 
     print >> f, '[b]Fewest Points Scored - {}[/b]'.format(years[-1])
-    for game in league['Records'][years[-1]]['Min All Games']:
+    for game in schedule['Records'][years[-1]]['Min All Games']:
         ownr = game[0]
         print >> f, '{4} {0}pts - {1} (Week {3} vs. {5}){6}'.format(game[3], game[0], game[1], game[2], game[4].ljust(4, '.'), schedule[game[1]][game[2]][ownr]['Opponent'].split(' ')[0], '*' if game[2] == current_week else '')
 
@@ -1533,7 +1564,7 @@ def output_rankings():
     fia.close()
     if current_top != prev_top:
         print >> f, '[b]Most Points Scored - All-Time[/b]'
-        for game in league['Records']['Max All Games']:
+        for game in schedule['Records']['Max All Games']:
             ownr = game[0]
             print >> f, '{4} {0}pts - {1} ({2} week {3} vs. {5}){6}'.format(game[3], game[0], game[1], game[2], game[4].ljust(4, '.'), schedule[game[1]][game[2]][ownr]['Opponent'].split(' ')[0], '*' if game[2] == current_week and game[1] == years[-1] else '')
 
@@ -1549,7 +1580,7 @@ def output_rankings():
     fia.close()
     if current_few != prev_few:
         print >> f, '[b]Fewest Points Scored - All-Time[/b]'
-        for game in league['Records']['Min All Games']:
+        for game in schedule['Records']['Min All Games']:
             ownr = game[0]
             print >> f, '{4} {0}pts - {1} ({2} week {3} vs. {5}){6}'.format(game[3], game[0], game[1], game[2], game[4].ljust(4, '.'), schedule[game[1]][game[2]][ownr]['Opponent'].split(' ')[0], '*' if game[2] == current_week and game[1] == years[-1] else '')
 
@@ -1590,14 +1621,27 @@ def output_rankings():
     f.close()
 
 def main():
-    schedule, draft = game_analysis(xlrd.open_workbook('resources/thug_island_history.xls'),
-                                    ['2010', '2011', '2012', '2013', '2014', '2015'])
-    team_analysis()
-    draft_history()
-    ranking_analysis()
-    build_rosters()
-    calculate_playoffs()
-    output_rankings()
+    thug_island = league.League("Thug Island")
+    game_analysis(thug_island,
+                  xlrd.open_workbook('resources/thug_island_history.xls'),
+                  ['2010', '2011', '2012', '2013', '2014', '2015', '2016'])
+
+    ownr = "Stuart Petty"
+    yr = "2015"
+    wk = "3"
+    gm = 1
+    owner = thug_island.owners[ownr]
+    schedule = thug_island.schedule[yr]
+    week = schedule.weeks[wk]
+    game = week.games[gm]
+    matchup = owner.games[yr][wk]
+    True
+    # team_analysis()
+    # draft_history()
+    # ranking_analysis()
+    # build_rosters()
+    # calculate_playoffs()
+    # output_rankings()
 
 if __name__ == "__main__":
     main()

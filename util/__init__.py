@@ -5,6 +5,7 @@ def add_all_players(plyr, pos = None):
     if 'Drafted' not in all_players[plyr].keys(): all_players[plyr]['Drafted'] = []
     if 'Keeper' not in all_players[plyr].keys(): all_players[plyr]['Keeper'] = []
 
+
 def add_ranks(list, comp = None):
     rks = range(1, len(list) + 1)
     for line in list:
@@ -37,6 +38,7 @@ def add_ranks(list, comp = None):
 
     return [x + [rks[list.index(x)]] for x in list]
 
+
 def add_suffix(num):
     num = str(num)
     if '1' in num and '10' not in num:
@@ -52,6 +54,7 @@ def add_suffix(num):
 
     return new
 
+
 def average(list, rnd = 1):
     if len(list) != 0:
         avg = round(sum(list) / len(list), rnd)
@@ -60,12 +63,14 @@ def average(list, rnd = 1):
 
     return avg
 
+
 def f_played_weeks(dict):
     plyd = []
     for wk in range(1, 16):
         if ranks[str(wk)]['Played']: plyd.append(str(wk))
 
     return plyd
+
 
 def f_current_week(dict):
     plyd = []
@@ -74,11 +79,13 @@ def f_current_week(dict):
 
     return str(plyd.index(False))
 
+
 def get_initials(name):
     fi = name.split(' ')[0][0]
     li = name.split(' ')[1][0]
 
     return fi + li
+
 
 def get_name(yr, xr, sht):
     if 'D/ST' not in sht.cell_value(yr, xr):
@@ -87,6 +94,7 @@ def get_name(yr, xr, sht):
         nam = sht.cell_value(yr, xr).split(u'\xa0')[0].replace('*', '').split(',')[0]
 
     return nam
+
 
 def get_team(yr, xr, sht):
     if 'D/ST' not in sht.cell_value(yr, xr):
@@ -99,12 +107,14 @@ def get_team(yr, xr, sht):
 
     return tmm
 
+
 def get_oppnt(yr, xr):
     val = sh.cell_value(yr, xr)
 
     oppnt = val.replace('@', '').replace('*', '').replace(' ', '').upper().replace('JAC', 'JAX').replace('WAS', 'WSH')
 
     return oppnt
+
 
 def get_position(yr, xr, sht):
     pos = []
@@ -125,6 +135,7 @@ def get_position(yr, xr, sht):
 
     return pos
 
+
 def get_score(yr, xr):
     val = sh.cell_value(yr, xr)
     if '--' == val:
@@ -134,11 +145,13 @@ def get_score(yr, xr):
 
     return scr
 
+
 def make_record(list):
     if list[2] != 0:
         return '{0}-{1}-{2}'.format(list[0], list[1], list[2])
     else:
         return '{0}-{1}'.format(list[0], list[1])
+
 
 def normpdf(x, mu = 1.0, sigma = 1.0):
     sigma += 0.000001
@@ -149,10 +162,12 @@ def normpdf(x, mu = 1.0, sigma = 1.0):
 
     return num / denom
 
+
 def remove_dupes(list):
     seen = set()
     seen_add = seen.add
     return [x for x in list if not (x in seen or seen_add(x))]
+
 
 def sumpdf(x, mu = 1.0, sigma = 1.0):
     sigma += 0.000001
