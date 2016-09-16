@@ -81,10 +81,10 @@ class Game:
             self.played = True
 
         if self.away_owner not in self.league.owners:
-            self.league.owners[self.away_owner] = owner.Owner(self.away_owner)
+            self.league.owners[self.away_owner] = owner.Owner(self.away_owner, self.league)
         away = self.league.owners[self.away_owner]
         if self.home_owner not in self.league.owners:
-            self.league.owners[self.home_owner] = owner.Owner(self.home_owner)
+            self.league.owners[self.home_owner] = owner.Owner(self.home_owner, self.league)
         home = self.league.owners[self.home_owner]
 
         if self.played:
