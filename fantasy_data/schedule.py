@@ -1,4 +1,5 @@
 from fantasy_data import owner
+from nfl_data import player
 
 
 class Schedule:
@@ -31,7 +32,7 @@ class Week:
         self.games = []
 
         idx = 0
-        while sh.cell_value(i, 0) != "" and i < sh.nrows-1:
+        while sh.cell_value(i, 0) != "" and i <= sh.nrows - 1:
             # If 'at'
             if sh.cell_value(i, 2) != "":
                 idx += 1
@@ -39,24 +40,49 @@ class Week:
                 game = Game(self, row, index=idx, detailed=False)
                 self.games.append(game)
             i += 1
-            True
+            if i == sh.nrows:
+                break
+
+    def add_details(self, sh):
+        for c in range(sh.ncols):
+            if sh.cell_value(1, c) in self.league.owners:
+                game = self.find_game(sh.cell_value(1, c))
+
+                table = []
+                for ir in range(0, sh.nrows):
+                    table.append([sh.cell_value(ir, ic) for ic in range(c, c + 5)])
+
+                game.build_from_matchup(table)
+
+    def find_game(self, owner_name):
+        for game in self.games:
+            if owner_name in [game.away_owner_name, game.home_owner_name]:
+                return game
 
 
 class Game:
     def __init__(self, week, data, index, detailed=False):
+        self.away_matchup = None
         self.away_owner = None
+        self.away_owner_name = None
         self.away_record = None
+        self.away_roster = []
         self.away_score = None
         self.away_team = None
         self.detailed = detailed
-        self.full_details = None
+        self.expended = None
+        self.home_matchup = None
         self.home_owner = None
+        self.home_owner_name = None
         self.home_record = None
+        self.home_roster = []
         self.home_score = None
         self.home_team = None
         self.index = index
         self.league = week.league
         self.played = False
+        self.raw_details = None
+        self.raw_summary = None
         self.schedule = week.schedule
         self.week = week
         self.winner = None
@@ -72,20 +98,23 @@ class Game:
             self.build_from_summary(data)
 
     def build_from_summary(self, row):
+        self.raw_summary = row
         [self.away_team, self.away_record] = row[0].replace(" (", "(").replace(")", "").split("(")
-        self.away_owner = row[1]
+        self.away_owner_name = row[1]
         [self.home_team, self.home_record] = row[3].replace(" (", "(").replace(")", "").split("(")
-        self.home_owner = row[4]
+        self.home_owner_name = row[4]
         score = row[5]
         if score not in ["", "Preview"]:
             self.played = True
 
-        if self.away_owner not in self.league.owners:
-            self.league.owners[self.away_owner] = owner.Owner(self.away_owner, self.league)
-        away = self.league.owners[self.away_owner]
-        if self.home_owner not in self.league.owners:
-            self.league.owners[self.home_owner] = owner.Owner(self.home_owner, self.league)
-        home = self.league.owners[self.home_owner]
+        if self.away_owner_name not in self.league.owners:
+            self.league.owners[self.away_owner_name] = owner.Owner(self.away_owner_name, self.league)
+        away = self.league.owners[self.away_owner_name]
+        if self.home_owner_name not in self.league.owners:
+            self.league.owners[self.home_owner_name] = owner.Owner(self.home_owner_name, self.league)
+        home = self.league.owners[self.home_owner_name]
+        self.away_owner = self.league.owners[self.away_owner_name]
+        self.home_owner = self.league.owners[self.home_owner_name]
 
         if self.played:
             self.away_score = float(score.split("-")[0])
@@ -94,10 +123,53 @@ class Game:
                 if self.away_score < self.home_score else "Tie"
             True
 
-        away.add_matchup(self, "Away")
-        home.add_matchup(self, "Home")
+        self.away_matchup = away.add_matchup(self, "Away")
+        self.home_matchup = home.add_matchup(self, "Home")
 
     def build_from_matchup(self, data):
+        self.detailed = True
+        self.raw_details = data
+        team_a = data[1][0]
+        team_b = data[5][0]
+        away = True if team_a == self.away_owner_name else False
+        box_a_start = 10
+        box_b_end = len(data) - 1
+        for i in range(box_a_start + 1, len(data)):
+            try:
+                if "BOX SCORE" in data[i][0]:
+                    box_a_end = i - 1
+                    box_b_start = i
+                    break
+            except TypeError:
+                pass
+
+        box_a = data[box_a_start:box_a_end + 1]
+        box_b = data[box_b_start:box_b_end + 1]
+        boxscore_away = box_a if away else box_b
+        boxscore_home = box_b if away else box_a
+
+        for home, [boxscore, owner] in enumerate([[boxscore_away, self.away_owner_name], [boxscore_home, self.home_owner_name]]):
+            owner = self.league.owners[owner]
+            roster = []
+            for r in boxscore:
+                plyr = None
+                if r[1] != "" and "PLAYER" not in r[1]:
+                    slot = r[0]
+                    name = player.get_name(r[1])
+                    if name not in self.league.players:
+                        self.league.players[name] = player.Player(r)
+                    plyr = self.league.players[name]
+
+                if plyr is not None:
+                    mtup = self.home_matchup if home else self.away_matchup
+                    plyr.update(mtup, r, slot)
+                    roster.append(plyr)
+
+            if home:
+                self.home_roster = roster
+            else:
+                self.away_roster = roster
+
         True
 
 

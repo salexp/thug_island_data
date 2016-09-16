@@ -116,26 +116,6 @@ def get_oppnt(yr, xr):
     return oppnt
 
 
-def get_position(yr, xr, sht):
-    pos = []
-    if 'QB' in sht.cell_value(yr, xr):
-        pos.append('QB')
-    if 'RB' in sht.cell_value(yr, xr):
-        pos.append('RB')
-    if 'WR' in sht.cell_value(yr, xr):
-        pos.append('WR')
-    if 'TE' in sht.cell_value(yr, xr):
-        pos.append('TE')
-    if 'D/ST' in sht.cell_value(yr, xr):
-        pos.append('DST')
-    if 'K' in sht.cell_value(yr, xr).replace(u'\xa0', u' ').split(' '):
-        pos.append('K')
-    if pos == []:
-        pos = [None]
-
-    return pos
-
-
 def get_score(yr, xr):
     val = sh.cell_value(yr, xr)
     if '--' == val:

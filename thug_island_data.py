@@ -1168,6 +1168,11 @@ def main():
         work_sheet = work_book.sheet_by_index(yi)
         thug_island.add_schedule(year, work_sheet)
 
+    years = ['2015', '2016']
+    for year in years:
+        work_book = xlrd.open_workbook('resources/thug_island_{}.xls'.format(year))
+        thug_island.add_games(year, work_book)
+
     ownr = "Stuart Petty"
     yr = "2015"
     wk = "3"

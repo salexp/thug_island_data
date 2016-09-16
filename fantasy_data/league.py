@@ -1,10 +1,11 @@
 from fantasy_data import schedule
-
+from nfl_data import player
 
 class League:
     def __init__(self, name):
         self.league_name = name
         self.owners = {}
+        self.players = {}
         self.records = Records(self)
         self.years = {}
 
@@ -12,6 +13,21 @@ class League:
         if not self.years.get(year):
             self.years[year] = Year()
         self.years[year].schedule = schedule.Schedule(self, sheet, year)
+
+    def add_games(self, year, book):
+        for w in range(1, len(self.years[year].schedule.weeks) + 1):
+            wk = str(w)
+            week = self.years[year].schedule.weeks[wk]
+            sheet = book.sheet_by_index(w - 1)
+            week.add_details(sheet)
+
+    def search_players(self, str):
+        found = []
+        for plyr in self.players:
+            if str in self.players[plyr].name:
+                found.append(self.players[plyr])
+
+        return found
 
 
 class Year:

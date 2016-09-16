@@ -106,6 +106,8 @@ class Owner:
                 record.pf += matchup.pf
                 record.pa += matchup.pa
 
+        return matchup
+
     def add_championship(self, year):
         if year not in self.championships:
             self.championships.append(year)
@@ -167,10 +169,8 @@ class Matchup():
         if side in ["Away", "Home"]:
             away = side == "Away"
             opposite = "Home" if away else "Away"
-            self.owner = game.league.owners[game.away_owner] if away \
-                else game.league.owners[game.home_owner]
-            self.opponent = game.league.owners[game.home_owner] if away \
-                else game.league.owners[game.away_owner]
+            self.owner = game.away_owner if away else game.home_owner
+            self.opponent = game.home_owner if away else game.away_owner
 
             if game.played:
                 self.won = game.winner == side
