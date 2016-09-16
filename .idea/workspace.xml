@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="6be07a5f-f06e-4b2f-bc48-65c182845357" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/fantasy_data/schedule.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/fantasy_data/league.py" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/resources/thug_island_history.xls" afterPath="$PROJECT_DIR$/resources/thug_island_history.xls" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/Fantasy.iml" afterPath="$PROJECT_DIR$/.idea/Fantasy.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/misc.xml" afterPath="$PROJECT_DIR$/.idea/misc.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/fantasy_data/owner.py" afterPath="$PROJECT_DIR$/fantasy_data/owner.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/thug_island_data.py" afterPath="$PROJECT_DIR$/thug_island_data.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/util/__init__.py" afterPath="$PROJECT_DIR$/util/__init__.py" />
     </list>
     <ignored path="Fantasy.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -20,7 +17,6 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
-  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
   </component>
@@ -29,13 +25,13 @@
     <favorites_list name="Fantasy" />
   </component>
   <component name="FileEditorManager">
-    <splitter split-orientation="horizontal" split-proportion="0.5745614">
+    <splitter split-orientation="horizontal" split-proportion="0.5172198">
       <split-first>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
           <file leaf-file-name="schedule.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/fantasy_data/schedule.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="461">
+                <state relative-caret-position="-243">
                   <caret line="93" column="16" selection-start-line="93" selection-start-column="16" selection-end-line="93" selection-end-column="16" />
                   <folding />
                 </state>
@@ -45,7 +41,7 @@
           <file leaf-file-name="__init__.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/util/__init__.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="294">
+                <state relative-caret-position="2890">
                   <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
                   <folding />
                 </state>
@@ -56,22 +52,22 @@
       </split-first>
       <split-second>
         <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-          <file leaf-file-name="thug_island_data.py" pinned="false" current-in-tab="true">
+          <file leaf-file-name="thug_island_data.py" pinned="false" current-in-tab="false">
             <entry file="file://$PROJECT_DIR$/thug_island_data.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="362">
-                  <caret line="1637" column="0" selection-start-line="1637" selection-start-column="0" selection-end-line="1637" selection-end-column="0" />
+                <state relative-caret-position="338">
+                  <caret line="1499" column="0" selection-start-line="1499" selection-start-column="0" selection-end-line="1499" selection-end-column="0" />
                   <folding>
                     <element signature="e#127#146#0" expanded="true" />
                     <element signature="e#3616#4336#0" expanded="false" />
                     <element signature="e#4380#5032#0" expanded="false" />
                     <element signature="e#5060#5455#0" expanded="false" />
                     <element signature="e#5511#6304#0" expanded="false" />
-                    <element signature="e#48469#49184#0" expanded="false" />
-                    <element signature="e#49215#71737#0" expanded="false" />
-                    <element signature="e#71765#72136#0" expanded="false" />
-                    <element signature="e#72169#76963#0" expanded="false" />
-                    <element signature="e#76993#98500#0" expanded="false" />
+                    <element signature="e#33466#34181#0" expanded="false" />
+                    <element signature="e#34212#56734#0" expanded="false" />
+                    <element signature="e#56762#57133#0" expanded="false" />
+                    <element signature="e#57166#61960#0" expanded="false" />
+                    <element signature="e#61990#83497#0" expanded="false" />
                   </folding>
                 </state>
               </provider>
@@ -87,11 +83,11 @@
               </provider>
             </entry>
           </file>
-          <file leaf-file-name="owner.py" pinned="false" current-in-tab="false">
+          <file leaf-file-name="owner.py" pinned="false" current-in-tab="true">
             <entry file="file://$PROJECT_DIR$/fantasy_data/owner.py">
               <provider selected="true" editor-type-id="text-editor">
-                <state relative-caret-position="210">
-                  <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+                <state relative-caret-position="459">
+                  <caret line="66" column="33" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="33" />
                   <folding />
                 </state>
               </provider>
@@ -116,17 +112,17 @@
       <list>
         <option value="$PROJECT_DIR$/util/__init__.py" />
         <option value="$PROJECT_DIR$/fantasy_data/league.py" />
+        <option value="$PROJECT_DIR$/fantasy_data/schedule.py" />
         <option value="$PROJECT_DIR$/fantasy_data/owner.py" />
         <option value="$PROJECT_DIR$/thug_island_data.py" />
-        <option value="$PROJECT_DIR$/fantasy_data/schedule.py" />
       </list>
     </option>
   </component>
   <component name="ProjectFrameBounds">
-    <option name="x" value="-1928" />
+    <option name="x" value="-8" />
     <option name="y" value="-8" />
     <option name="width" value="1936" />
-    <option name="height" value="1096" />
+    <option name="height" value="1056" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -153,8 +149,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -217,6 +211,8 @@
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scratches" />
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -407,25 +403,25 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-1928" y="-8" width="1936" height="1096" extended-state="6" />
-    <editor active="false" />
+    <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15911485" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.15903106" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826748" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24960506" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31639004" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.31567568" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32826748" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
@@ -445,7 +441,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="python-line">
           <url>file://$PROJECT_DIR$/thug_island_data.py</url>
-          <line>1637</line>
+          <line>1499</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
       </breakpoints>
@@ -454,6 +450,49 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/fantasy_data/schedule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1581">
+          <caret line="93" column="16" selection-start-line="93" selection-start-column="16" selection-end-line="93" selection-end-column="16" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/util/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2890">
+          <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/thug_island_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#127#146#0" expanded="true" />
+            <element signature="e#3616#4336#0" expanded="false" />
+            <element signature="e#4380#5032#0" expanded="false" />
+            <element signature="e#5060#5455#0" expanded="false" />
+            <element signature="e#5511#6304#0" expanded="false" />
+            <element signature="e#33466#34181#0" expanded="false" />
+            <element signature="e#34212#56734#0" expanded="false" />
+            <element signature="e#56762#57133#0" expanded="false" />
+            <element signature="e#57166#61960#0" expanded="false" />
+            <element signature="e#61990#83497#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fantasy_data/league.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="187">
+          <caret line="11" column="0" selection-start-line="11" selection-start-column="0" selection-end-line="11" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/fantasy_data/schedule.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="663">
@@ -480,11 +519,11 @@
             <element signature="e#4380#5032#0" expanded="false" />
             <element signature="e#5060#5455#0" expanded="false" />
             <element signature="e#5511#6304#0" expanded="false" />
-            <element signature="e#48469#49184#0" expanded="false" />
-            <element signature="e#49215#71737#0" expanded="false" />
-            <element signature="e#71765#72136#0" expanded="false" />
-            <element signature="e#72169#76963#0" expanded="false" />
-            <element signature="e#76993#98500#0" expanded="false" />
+            <element signature="e#33466#34181#0" expanded="false" />
+            <element signature="e#34212#56734#0" expanded="false" />
+            <element signature="e#56762#57133#0" expanded="false" />
+            <element signature="e#57166#61960#0" expanded="false" />
+            <element signature="e#61990#83497#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -523,11 +562,11 @@
             <element signature="e#4380#5032#0" expanded="false" />
             <element signature="e#5060#5455#0" expanded="false" />
             <element signature="e#5511#6304#0" expanded="false" />
-            <element signature="e#48469#49184#0" expanded="false" />
-            <element signature="e#49215#71737#0" expanded="false" />
-            <element signature="e#71765#72136#0" expanded="false" />
-            <element signature="e#72169#76963#0" expanded="false" />
-            <element signature="e#76993#98500#0" expanded="false" />
+            <element signature="e#33466#34181#0" expanded="false" />
+            <element signature="e#34212#56734#0" expanded="false" />
+            <element signature="e#56762#57133#0" expanded="false" />
+            <element signature="e#57166#61960#0" expanded="false" />
+            <element signature="e#61990#83497#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -550,14 +589,21 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="215">
           <caret line="406" column="0" selection-start-line="406" selection-start-column="0" selection-end-line="406" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/util/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="294">
+        <state relative-caret-position="2890">
           <caret line="170" column="0" selection-start-line="170" selection-start-column="0" selection-end-line="170" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/fantasy_data/schedule.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-243">
+          <caret line="93" column="16" selection-start-line="93" selection-start-column="16" selection-end-line="93" selection-end-column="16" />
           <folding />
         </state>
       </provider>
@@ -572,43 +618,35 @@
     </entry>
     <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/pydevd.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="937" column="0" selection-start-line="937" selection-start-column="0" selection-end-line="937" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/fantasy_data/owner.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="17" column="0" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+        <state relative-caret-position="202">
+          <caret line="963" column="0" selection-start-line="963" selection-start-column="0" selection-end-line="963" selection-end-column="0" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/thug_island_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="362">
-          <caret line="1637" column="0" selection-start-line="1637" selection-start-column="0" selection-end-line="1637" selection-end-column="0" />
+        <state relative-caret-position="338">
+          <caret line="1499" column="0" selection-start-line="1499" selection-start-column="0" selection-end-line="1499" selection-end-column="0" />
           <folding>
             <element signature="e#127#146#0" expanded="true" />
             <element signature="e#3616#4336#0" expanded="false" />
             <element signature="e#4380#5032#0" expanded="false" />
             <element signature="e#5060#5455#0" expanded="false" />
             <element signature="e#5511#6304#0" expanded="false" />
-            <element signature="e#48469#49184#0" expanded="false" />
-            <element signature="e#49215#71737#0" expanded="false" />
-            <element signature="e#71765#72136#0" expanded="false" />
-            <element signature="e#72169#76963#0" expanded="false" />
-            <element signature="e#76993#98500#0" expanded="false" />
+            <element signature="e#33466#34181#0" expanded="false" />
+            <element signature="e#34212#56734#0" expanded="false" />
+            <element signature="e#56762#57133#0" expanded="false" />
+            <element signature="e#57166#61960#0" expanded="false" />
+            <element signature="e#61990#83497#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/fantasy_data/schedule.py">
+    <entry file="file://$PROJECT_DIR$/fantasy_data/owner.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="93" column="16" selection-start-line="93" selection-start-column="16" selection-end-line="93" selection-end-column="16" />
+        <state relative-caret-position="459">
+          <caret line="66" column="33" selection-start-line="66" selection-start-column="33" selection-end-line="66" selection-end-column="33" />
           <folding />
         </state>
       </provider>

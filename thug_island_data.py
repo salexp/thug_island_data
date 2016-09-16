@@ -143,39 +143,6 @@ def playoff_hopes(_ownrs = owners, file = None):
 
 def game_analysis(league, work_book, years):
     schedule = {}
-    for yi, year in enumerate(years):
-        work_sheet = work_book.sheet_by_index(yi)
-        league.add_schedule(year, work_sheet)
-
-    if False:
-                if name not in team_names.keys(): team_names[name] = ownr
-                self[wek][ownr]['Opponent'] = opp
-                self[wek][ownr]['Opponent Name'] = name_opp
-                self[wek][ownr]['PF'] = scr_own
-                self[wek][ownr]['PA'] = scr_opp
-                self[wek][ownr]['Win'] = scr_own > scr_opp
-                self[wek][ownr]['Tie'] = scr_own == scr_opp
-                self[wek][ownr]['Loss'] = scr_own < scr_opp
-                self[wek][ownr]['Ws'] = ws
-                self[wek][ownr]['Ls'] = ls
-                self[wek][ownr]['Ts'] = ts
-                self[wek][ownr]['Playoff'] = (week == 14 and game < 3 and year == '2010') or (week == 15 and game == 1 and year == '2010') or (week in [14, 15] and game < 3 and year in years[1:]) or (week == 16 and game == 1)
-                self[wek][ownr]['Home'] = False
-                self[wek][opp]['Name'] = name_opp
-                if name_opp not in team_names.keys(): team_names[name_opp] = opp
-                self[wek][opp]['Opponent'] = ownr
-                self[wek][opp]['Opponent Name'] = name
-                self[wek][opp]['PF'] = scr_opp
-                self[wek][opp]['PA'] = scr_own
-                self[wek][opp]['Win'] = scr_opp > scr_own
-                self[wek][opp]['Tie'] = scr_opp == scr_own
-                self[wek][opp]['Loss'] = scr_opp < scr_own
-                self[wek][opp]['Ws'] = ws_opp
-                self[wek][opp]['Ls'] = ls_opp
-                self[wek][opp]['Ts'] = ts_opp
-                self[wek][opp]['Playoff'] = (week == 14 and game < 3 and year == '2010') or (week == 15 and game == 1 and year == '2010') or (week in [14, 15] and game < 3 and year in years[1:]) or (week == 16 and game == 1)
-                self[wek][opp]['Home'] = True
-
     #     # Build draft dictionary
     #     draft[year] = {}
     #     per_rnd = 0
@@ -276,272 +243,164 @@ def team_analysis():
         'Min All Games' : [['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9], ['ownr', 'year', 'week', 999.9]], \
         }
     for ownr in owners:
-        teams[ownr] = {}
-        teams[ownr]['Names'] = []
-        teams[ownr]['Overall'] = [0, 0, 0, 0.0, 0.0, 0.0]
-        teams[ownr]['Season'] = [0, 0, 0, 0.0, 0.0, 0.0]
-        teams[ownr]['Postseason'] = [0, 0, 0, 0.0, 0.0, 0.0]
-        teams[ownr]['Playoffs'] = [0, 0, 0, 0.0, 0.0, 0.0]
-        teams[ownr]['Appearances'] = []
-        teams[ownr]['Byes'] = []
-        teams[ownr]['Championships'] = []
-        teams[ownr]['East'] = [0, 0, 0, 0.0, 0.0, 0.0]
-        teams[ownr]['West'] = [0, 0, 0, 0.0, 0.0, 0.0]
-        teams[ownr]['Drafted'] = {}
-        teams[ownr]['Teams'] = deepcopy(blank_nfl)
-        teams[ownr]['Roster'] = {'QB' : {}, 'RB' : {}, 'WR' : {}, 'TE' : {}, 'DST' : {}, 'K' : {}}
-        if ownr in east:
-            teams[ownr]['Division'] = 'East'
-            teams[ownr]['Cross'] = 'West'
-        elif ownr in west:
-            teams[ownr]['Division'] = 'West'
-            teams[ownr]['Cross'] = 'East'
-        for year in years:
-            teams[ownr][year] = {'Record' : [0, 0, 0, 0.0, 0.0, 0.0], 'Playoffs' : False, 'Bye' : False, 'Championship' : False, 'Games' : []}
-            for week in schedule[year].keys():
-                if ownr in schedule[year][week].keys():
-                    if schedule[year][week][ownr]['PF'] != None:
-                        name = schedule[year][week][ownr]['Name']
-                        if name not in teams[ownr]['Names']: teams[ownr]['Names'].append(name)
+        if year not in teams[ownr]['Appearances']:
+                teams[ownr]['Appearances'].append(year)
+                teams[ownr][year]['Playoffs'] = True
+        if year not in teams[ownr]['Championships'] and win and ((week == '15' and year == '2010') or week == '16'):
+            teams[ownr]['Championships'].append(year)
+            teams[ownr][year]['Championship'] = True
+        if pf > league['Records']['Max Points']:
+            league['Records']['Max Points'] = pf
+            league['Records']['Max Game'][0] = year
+            league['Records']['Max Game'][1] = week
+        if year == years[-1]:
+            if pf > league['Records'][years[-1]]['Max Points']:
+                league['Records'][years[-1]]['Max Points'] = pf
+                league['Records'][years[-1]]['Max Game'][0] = year
+                league['Records'][years[-1]]['Max Game'][1] = week
+        if pf < league['Records']['Min Points'] and pf != 0.0 and not schedule[year][week]['Data']['Postseason']:
+            league['Records']['Min Points'] = pf
+            league['Records']['Min Game'][0] = year
+            league['Records']['Min Game'][1] = week
+        if year == years[-1]:
+            if pf < league['Records'][years[-1]]['Min Points'] and pf != 0.0 and not schedule[year][week]['Data']['Postseason']:
+                league['Records'][years[-1]]['Min Points'] = pf
+                league['Records'][years[-1]]['Min Game'][0] = year
+                league['Records'][years[-1]]['Min Game'][1] = week
+        # Top Games
+        if pf > min(league['Records']['Max List']):
+            temp_a = league['Records']['Max List'][:-1]
+            temp_b = league['Records']['Max All Games'][:-1]
+        elif pf == min(league['Records']['Max List']):
+            temp_a = league['Records']['Max List']
+            temp_b = league['Records']['Max All Games']
+        temp_a.append(pf)
+        temp_b.append([ownr, year, week, pf])
+        temp_as = sorted(temp_a, key=lambda param: param, reverse=True)
+        temp_bs = sorted(temp_b, key=lambda param: (param[3], param[1], param[2]), reverse=True)
+        while len(temp_as) > 10:
+            temp_as = temp_as[:-1]
+            temp_bs = temp_bs[:-1]
+        league['Records']['Max List'] = list(temp_as)
+        league['Records']['Max All Games'] = list(temp_bs)
+        # Bottom Games
+        if not schedule[year][week]['Data']['Postseason']:
+            if pf < max(league['Records']['Min List']):
+                temp_am = league['Records']['Min List'][:-1]
+                temp_bm = league['Records']['Min All Games'][:-1]
+            elif pf == max(league['Records']['Min List']):
+                temp_am = league['Records']['Min List']
+                temp_bm = league['Records']['Min All Games']
+            temp_am.append(pf)
+            temp_bm.append([ownr, year, week, pf])
+            temp_asm = sorted(temp_am, key=lambda param: param, reverse=False)
+            temp_bsm = sorted(temp_bm, key=lambda param: (param[3], param[1], param[2]), reverse=False)
+            while len(temp_asm) > 10:
+                temp_asm = temp_asm[:-1]
+                temp_bsm = temp_bsm[:-1]
+            league['Records']['Min List'] = list(temp_asm)
+            league['Records']['Min All Games'] = list(temp_bsm)
+        # Top Yearly Games
+        if year == years[-1]:
+            if pf > min(league['Records'][years[-1]]['Max List']):
+                temp_ab = league['Records'][years[-1]]['Max List'][:-1]
+                temp_bb = league['Records'][years[-1]]['Max All Games'][:-1]
+            elif pf == min(league['Records'][years[-1]]['Max List']):
+                temp_ab = league['Records'][years[-1]]['Max List']
+                temp_bb = league['Records'][years[-1]]['Max All Games']
+            temp_ab.append(pf)
+            temp_bb.append([ownr, year, week, pf])
+            temp_asb = sorted(temp_ab, key=lambda param: param, reverse=True)
+            temp_bsb = sorted(temp_bb, key=lambda param: (param[3], param[1], param[2]), reverse=True)
+            while len(temp_asb) > 10:
+                temp_asb = temp_asb[:-1]
+                temp_bsb = temp_bsb[:-1]
+            league['Records'][years[-1]]['Max List'] = list(temp_asb)
+            league['Records'][years[-1]]['Max All Games'] = list(temp_bsb)
+        # Bottom Yearly Games
+        if not schedule[year][week]['Data']['Postseason']:
+            if year == years[-1]:
+                if pf < max(league['Records'][years[-1]]['Min List']):
+                    temp_abm = league['Records'][years[-1]]['Min List'][:-1]
+                    temp_bbm = league['Records'][years[-1]]['Min All Games'][:-1]
+                elif pf == max(league['Records'][years[-1]]['Min List']):
+                    temp_abm = league['Records'][years[-1]]['Min List']
+                    temp_bbm = league['Records'][years[-1]]['Min All Games']
+                temp_abm.append(pf)
+                temp_bbm.append([ownr, year, week, pf])
+                temp_asbm = sorted(temp_abm, key=lambda param: param, reverse=False)
+                temp_bsbm = sorted(temp_bbm, key=lambda param: (param[3], param[1], param[2]), reverse=False)
+                while len(temp_asbm) > 10:
+                    temp_asbm = temp_asbm[:-1]
+                    temp_bsbm = temp_bsbm[:-1]
+                league['Records'][years[-1]]['Min List'] = list(temp_asbm)
+                league['Records'][years[-1]]['Min All Games'] = list(temp_bsbm)
+        # Top Combined Score
+        cp = pf + pa
+        if [opp, year, week, sorted([pf, pa], reverse = True), ownr] not in league['Records']['Max Combined Games']:
+            if cp > min(league['Records']['Max Combined List']):
+                temp_ac = league['Records']['Max Combined List'][:-1]
+                temp_bc = league['Records']['Max Combined Games'][:-1]
+            elif cp == min(league['Records']['Max Combined List']):
+                temp_ac = league['Records']['Max Combined List']
+                temp_bc = league['Records']['Max Combined Games']
+            temp_ac.append(cp)
+            temp_bc.append([ownr, year, week, sorted([pf, pa], reverse = True), opp])
+            temp_asc = sorted(temp_ac, key=lambda param: param, reverse=True)
+            temp_bsc = sorted(temp_bc, key=lambda param: (sum(param[3]), param[1], param[2]), reverse=True)
+            while len(temp_asc) > 10:
+                temp_asc = temp_asc[:-1]
+                temp_bsc = temp_bsc[:-1]
+            league['Records']['Max Combined List'] = list(temp_asc)
+            league['Records']['Max Combined Games'] = list(temp_bsc)
+        # Bottom Combined Score
+        cp = round(pf + pa, 1)
+        wnnr = ownr if win else opp
+        losr = opp if win else ownr
+        if [wnnr, year, week, sorted([pf, pa], reverse = True), losr] not in league['Records']['Min Combined Games'] and not schedule[year][week]['Data']['Postseason']:
+            if cp < min(league['Records']['Min Combined List']):
+                temp_acm = league['Records']['Min Combined List'][:-1]
+                temp_bcm = league['Records']['Min Combined Games'][:-1]
+            elif cp == min(league['Records']['Min Combined List']):
+                temp_acm = league['Records']['Min Combined List']
+                temp_bcm = league['Records']['Min Combined Games']
+            temp_acm.append(cp)
+            temp_bcm.append([wnnr, year, week, sorted([pf, pa], reverse = True), losr])
+            temp_ascm = sorted(temp_acm, key=lambda param: param, reverse=False)
+            temp_bscm = sorted(temp_bcm, key=lambda param: (sum(param[3]), param[1], param[2]), reverse=False)
+            while len(temp_ascm) > 10:
+                temp_ascm = temp_ascm[:-1]
+                temp_bscm = temp_bscm[:-1]
+            league['Records']['Min Combined List'] = list(temp_ascm)
+            league['Records']['Min Combined Games'] = list(temp_bscm)
 
-                        opp = schedule[year][week][ownr]['Opponent']
-                        win = schedule[year][week][ownr]['Win']
-                        tie = schedule[year][week][ownr]['Tie']
-                        loss = schedule[year][week][ownr]['Loss']
-                        pf = schedule[year][week][ownr]['PF']
-                        pa = schedule[year][week][ownr]['PA']
-                        if opp not in teams[ownr].keys(): teams[ownr][opp] = [0, 0, 0, 0.0, 0.0, 0.0, []]
-                        teams[ownr][year]['Games'].append(pf)
-                        teams[ownr][year]['Record'][0] += win
-                        teams[ownr][year]['Record'][1] += loss
-                        teams[ownr][year]['Record'][2] += tie
-                        teams[ownr][year]['Record'][3] = (teams[ownr][year]['Record'][3] * (sum(teams[ownr][year]['Record'][0:3]) - 1) + pf) / sum(teams[ownr][year]['Record'][0:3])
-                        teams[ownr][year]['Record'][4] = (teams[ownr][year]['Record'][4] * (sum(teams[ownr][year]['Record'][0:3]) - 1) + pa) / sum(teams[ownr][year]['Record'][0:3])
-                        teams[ownr][year]['Record'][5] = (teams[ownr][year]['Record'][0] + 0.5 * teams[ownr][year]['Record'][2]) / (teams[ownr][year]['Record'][0] + teams[ownr][year]['Record'][1] + teams[ownr][year]['Record'][2])
-                        teams[ownr][opp][0] += win
-                        teams[ownr][opp][1] += loss
-                        teams[ownr][opp][2] += tie
-                        teams[ownr][opp][3] = (teams[ownr][opp][3] * (sum(teams[ownr][opp][0:3]) - 1) + pf) / sum(teams[ownr][opp][0:3])
-                        teams[ownr][opp][4] = (teams[ownr][opp][4] * (sum(teams[ownr][opp][0:3]) - 1) + pa) / sum(teams[ownr][opp][0:3])
-                        teams[ownr][opp][5] = (teams[ownr][opp][0] + 0.5 * teams[ownr][opp][2]) / (teams[ownr][opp][0] + teams[ownr][opp][1] + teams[ownr][opp][2])
-                        teams[ownr][opp][6].append([pf, pa, year, week])
-                        if opp in east:
-                            teams[ownr]['East'][0] += win
-                            teams[ownr]['East'][1] += loss
-                            teams[ownr]['East'][2] += tie
-                            teams[ownr]['East'][3] = (teams[ownr]['East'][3] * (sum(teams[ownr]['East'][0:3]) - 1) + pf) / sum(teams[ownr]['East'][0:3])
-                            teams[ownr]['East'][4] = (teams[ownr]['East'][4] * (sum(teams[ownr]['East'][0:3]) - 1) + pa) / sum(teams[ownr]['East'][0:3])
-                            teams[ownr]['East'][5] = (teams[ownr]['East'][0] + 0.5 * teams[ownr]['East'][2]) / (teams[ownr]['East'][0] + teams[ownr]['East'][1] + teams[ownr]['East'][2])
-                            league[teams[ownr]['Division']]['East'][0] += win
-                            league[teams[ownr]['Division']]['East'][1] += loss
-                            league[teams[ownr]['Division']]['East'][2] += tie
-                            league[teams[ownr]['Division']]['East'][3] = (league[teams[ownr]['Division']]['East'][3] * (sum(league[teams[ownr]['Division']]['East'][0:3]) - 1) + pf) / sum(league[teams[ownr]['Division']]['East'][0:3])
-                            league[teams[ownr]['Division']]['East'][4] = (league[teams[ownr]['Division']]['East'][4] * (sum(league[teams[ownr]['Division']]['East'][0:3]) - 1) + pa) / sum(league[teams[ownr]['Division']]['East'][0:3])
-                            league[teams[ownr]['Division']]['East'][5] = (league[teams[ownr]['Division']]['East'][0] + 0.5 * league[teams[ownr]['Division']]['East'][2]) / (league[teams[ownr]['Division']]['East'][0] + league[teams[ownr]['Division']]['East'][1] + league[teams[ownr]['Division']]['East'][2])
-                        elif opp in west:
-                            teams[ownr]['West'][0] += win
-                            teams[ownr]['West'][1] += loss
-                            teams[ownr]['West'][2] += tie
-                            teams[ownr]['West'][3] = (teams[ownr]['West'][3] * (sum(teams[ownr]['West'][0:3]) - 1) + pf) / sum(teams[ownr]['West'][0:3])
-                            teams[ownr]['West'][4] = (teams[ownr]['West'][4] * (sum(teams[ownr]['West'][0:3]) - 1) + pa) / sum(teams[ownr]['West'][0:3])
-                            teams[ownr]['West'][5] = (teams[ownr]['West'][0] + 0.5 * teams[ownr]['West'][2]) / (teams[ownr]['West'][0] + teams[ownr]['West'][1] + teams[ownr]['West'][2])
-                            league[teams[ownr]['Division']]['West'][0] += win
-                            league[teams[ownr]['Division']]['West'][1] += loss
-                            league[teams[ownr]['Division']]['West'][2] += tie
-                            league[teams[ownr]['Division']]['West'][3] = (league[teams[ownr]['Division']]['West'][3] * (sum(league[teams[ownr]['Division']]['West'][0:3]) - 1) + pf) / sum(league[teams[ownr]['Division']]['West'][0:3])
-                            league[teams[ownr]['Division']]['West'][4] = (league[teams[ownr]['Division']]['West'][4] * (sum(league[teams[ownr]['Division']]['West'][0:3]) - 1) + pa) / sum(league[teams[ownr]['Division']]['West'][0:3])
-                            league[teams[ownr]['Division']]['West'][5] = (league[teams[ownr]['Division']]['West'][0] + 0.5 * league[teams[ownr]['Division']]['West'][2]) / (league[teams[ownr]['Division']]['West'][0] + league[teams[ownr]['Division']]['West'][1] + league[teams[ownr]['Division']]['West'][2])
-                        teams[ownr]['Overall'][0] += win
-                        teams[ownr]['Overall'][1] += loss
-                        teams[ownr]['Overall'][2] += tie
-                        teams[ownr]['Overall'][3] = (teams[ownr]['Overall'][3] * (sum(teams[ownr]['Overall'][0:3]) - 1) + pf) / sum(teams[ownr]['Overall'][0:3])
-                        teams[ownr]['Overall'][4] = (teams[ownr]['Overall'][4] * (sum(teams[ownr]['Overall'][0:3]) - 1) + pa) / sum(teams[ownr]['Overall'][0:3])
-                        teams[ownr]['Overall'][5] = (teams[ownr]['Overall'][0] + 0.5 * teams[ownr]['Overall'][2]) / (teams[ownr]['Overall'][0] + teams[ownr]['Overall'][1] + teams[ownr]['Overall'][2])
-                        league['Overall'][0] += win
-                        league['Overall'][1] += loss
-                        league['Overall'][2] += tie
-                        league['Overall'][3] = (league['Overall'][3] * (sum(league['Overall'][0:3]) - 1) + pf) / sum(league['Overall'][0:3])
-                        league['Overall'][4] = (league['Overall'][4] * (sum(league['Overall'][0:3]) - 1) + pa) / sum(league['Overall'][0:3])
-                        league['Overall'][5] = (league['Overall'][0] + 0.5 * league['Overall'][2]) / (league['Overall'][0] + league['Overall'][1] + league['Overall'][2])
-                        if not schedule[year][week]['Data']['Postseason']:
-                            teams[ownr]['Season'][0] += win
-                            teams[ownr]['Season'][1] += loss
-                            teams[ownr]['Season'][2] += tie
-                            teams[ownr]['Season'][3] = (teams[ownr]['Season'][3] * (sum(teams[ownr]['Season'][0:3]) - 1) + pf) / sum(teams[ownr]['Season'][0:3])
-                            teams[ownr]['Season'][4] = (teams[ownr]['Season'][4] * (sum(teams[ownr]['Season'][0:3]) - 1) + pa) / sum(teams[ownr]['Season'][0:3])
-                            teams[ownr]['Season'][5] = (teams[ownr]['Season'][0] + 0.5 * teams[ownr]['Season'][2]) / (teams[ownr]['Season'][0] + teams[ownr]['Season'][1] + teams[ownr]['Season'][2])
-                        elif schedule[year][week]['Data']['Postseason']:
-                            teams[ownr]['Postseason'][0] += win
-                            teams[ownr]['Postseason'][1] += loss
-                            teams[ownr]['Postseason'][2] += tie
-                            teams[ownr]['Postseason'][3] = (teams[ownr]['Postseason'][3] * (sum(teams[ownr]['Postseason'][0:3]) - 1) + pf) / sum(teams[ownr]['Postseason'][0:3])
-                            teams[ownr]['Postseason'][4] = (teams[ownr]['Postseason'][4] * (sum(teams[ownr]['Postseason'][0:3]) - 1) + pa) / sum(teams[ownr]['Postseason'][0:3])
-                            teams[ownr]['Postseason'][5] = (teams[ownr]['Postseason'][0] + 0.5 * teams[ownr]['Postseason'][2]) / (teams[ownr]['Postseason'][0] + teams[ownr]['Postseason'][1] + teams[ownr]['Postseason'][2])
-                        if schedule[year][week][ownr]['Playoff']:
-                            teams[ownr]['Playoffs'][0] += win
-                            teams[ownr]['Playoffs'][1] += loss
-                            teams[ownr]['Playoffs'][2] += tie
-                            teams[ownr]['Playoffs'][3] = (teams[ownr]['Playoffs'][3] * (sum(teams[ownr]['Playoffs'][0:3]) - 1) + pf) / sum(teams[ownr]['Playoffs'][0:3])
-                            teams[ownr]['Playoffs'][4] = (teams[ownr]['Playoffs'][4] * (sum(teams[ownr]['Playoffs'][0:3]) - 1) + pa) / sum(teams[ownr]['Playoffs'][0:3])
-                            teams[ownr]['Playoffs'][5] = (teams[ownr]['Playoffs'][0] + 0.5 * teams[ownr]['Playoffs'][2]) / (teams[ownr]['Playoffs'][0] + teams[ownr]['Playoffs'][1] + teams[ownr]['Playoffs'][2])
-                            if year not in teams[ownr]['Appearances']:
-                                teams[ownr]['Appearances'].append(year)
-                                teams[ownr][year]['Playoffs'] = True
-                            if year not in teams[ownr]['Championships'] and win and ((week == '15' and year == '2010') or week == '16'):
-                                teams[ownr]['Championships'].append(year)
-                                teams[ownr][year]['Championship'] = True
-                        if pf > league['Records']['Max Points']:
-                            league['Records']['Max Points'] = pf
-                            league['Records']['Max Game'][0] = year
-                            league['Records']['Max Game'][1] = week
-                        if year == years[-1]:
-                            if pf > league['Records'][years[-1]]['Max Points']:
-                                league['Records'][years[-1]]['Max Points'] = pf
-                                league['Records'][years[-1]]['Max Game'][0] = year
-                                league['Records'][years[-1]]['Max Game'][1] = week
-                        if pf < league['Records']['Min Points'] and pf != 0.0 and not schedule[year][week]['Data']['Postseason']:
-                            league['Records']['Min Points'] = pf
-                            league['Records']['Min Game'][0] = year
-                            league['Records']['Min Game'][1] = week
-                        if year == years[-1]:
-                            if pf < league['Records'][years[-1]]['Min Points'] and pf != 0.0 and not schedule[year][week]['Data']['Postseason']:
-                                league['Records'][years[-1]]['Min Points'] = pf
-                                league['Records'][years[-1]]['Min Game'][0] = year
-                                league['Records'][years[-1]]['Min Game'][1] = week
-                        # Top Games
-                        if pf > min(league['Records']['Max List']):
-                            temp_a = league['Records']['Max List'][:-1]
-                            temp_b = league['Records']['Max All Games'][:-1]
-                        elif pf == min(league['Records']['Max List']):
-                            temp_a = league['Records']['Max List']
-                            temp_b = league['Records']['Max All Games']
-                        temp_a.append(pf)
-                        temp_b.append([ownr, year, week, pf])
-                        temp_as = sorted(temp_a, key=lambda param: param, reverse=True)
-                        temp_bs = sorted(temp_b, key=lambda param: (param[3], param[1], param[2]), reverse=True)
-                        while len(temp_as) > 10:
-                            temp_as = temp_as[:-1]
-                            temp_bs = temp_bs[:-1]
-                        league['Records']['Max List'] = list(temp_as)
-                        league['Records']['Max All Games'] = list(temp_bs)
-                        # Bottom Games
-                        if not schedule[year][week]['Data']['Postseason']:
-                            if pf < max(league['Records']['Min List']):
-                                temp_am = league['Records']['Min List'][:-1]
-                                temp_bm = league['Records']['Min All Games'][:-1]
-                            elif pf == max(league['Records']['Min List']):
-                                temp_am = league['Records']['Min List']
-                                temp_bm = league['Records']['Min All Games']
-                            temp_am.append(pf)
-                            temp_bm.append([ownr, year, week, pf])
-                            temp_asm = sorted(temp_am, key=lambda param: param, reverse=False)
-                            temp_bsm = sorted(temp_bm, key=lambda param: (param[3], param[1], param[2]), reverse=False)
-                            while len(temp_asm) > 10:
-                                temp_asm = temp_asm[:-1]
-                                temp_bsm = temp_bsm[:-1]
-                            league['Records']['Min List'] = list(temp_asm)
-                            league['Records']['Min All Games'] = list(temp_bsm)
-                        # Top Yearly Games
-                        if year == years[-1]:
-                            if pf > min(league['Records'][years[-1]]['Max List']):
-                                temp_ab = league['Records'][years[-1]]['Max List'][:-1]
-                                temp_bb = league['Records'][years[-1]]['Max All Games'][:-1]
-                            elif pf == min(league['Records'][years[-1]]['Max List']):
-                                temp_ab = league['Records'][years[-1]]['Max List']
-                                temp_bb = league['Records'][years[-1]]['Max All Games']
-                            temp_ab.append(pf)
-                            temp_bb.append([ownr, year, week, pf])
-                            temp_asb = sorted(temp_ab, key=lambda param: param, reverse=True)
-                            temp_bsb = sorted(temp_bb, key=lambda param: (param[3], param[1], param[2]), reverse=True)
-                            while len(temp_asb) > 10:
-                                temp_asb = temp_asb[:-1]
-                                temp_bsb = temp_bsb[:-1]
-                            league['Records'][years[-1]]['Max List'] = list(temp_asb)
-                            league['Records'][years[-1]]['Max All Games'] = list(temp_bsb)
-                        # Bottom Yearly Games
-                        if not schedule[year][week]['Data']['Postseason']:
-                            if year == years[-1]:
-                                if pf < max(league['Records'][years[-1]]['Min List']):
-                                    temp_abm = league['Records'][years[-1]]['Min List'][:-1]
-                                    temp_bbm = league['Records'][years[-1]]['Min All Games'][:-1]
-                                elif pf == max(league['Records'][years[-1]]['Min List']):
-                                    temp_abm = league['Records'][years[-1]]['Min List']
-                                    temp_bbm = league['Records'][years[-1]]['Min All Games']
-                                temp_abm.append(pf)
-                                temp_bbm.append([ownr, year, week, pf])
-                                temp_asbm = sorted(temp_abm, key=lambda param: param, reverse=False)
-                                temp_bsbm = sorted(temp_bbm, key=lambda param: (param[3], param[1], param[2]), reverse=False)
-                                while len(temp_asbm) > 10:
-                                    temp_asbm = temp_asbm[:-1]
-                                    temp_bsbm = temp_bsbm[:-1]
-                                league['Records'][years[-1]]['Min List'] = list(temp_asbm)
-                                league['Records'][years[-1]]['Min All Games'] = list(temp_bsbm)
-                        # Top Combined Score
-                        cp = pf + pa
-                        if [opp, year, week, sorted([pf, pa], reverse = True), ownr] not in league['Records']['Max Combined Games']:
-                            if cp > min(league['Records']['Max Combined List']):
-                                temp_ac = league['Records']['Max Combined List'][:-1]
-                                temp_bc = league['Records']['Max Combined Games'][:-1]
-                            elif cp == min(league['Records']['Max Combined List']):
-                                temp_ac = league['Records']['Max Combined List']
-                                temp_bc = league['Records']['Max Combined Games']
-                            temp_ac.append(cp)
-                            temp_bc.append([ownr, year, week, sorted([pf, pa], reverse = True), opp])
-                            temp_asc = sorted(temp_ac, key=lambda param: param, reverse=True)
-                            temp_bsc = sorted(temp_bc, key=lambda param: (sum(param[3]), param[1], param[2]), reverse=True)
-                            while len(temp_asc) > 10:
-                                temp_asc = temp_asc[:-1]
-                                temp_bsc = temp_bsc[:-1]
-                            league['Records']['Max Combined List'] = list(temp_asc)
-                            league['Records']['Max Combined Games'] = list(temp_bsc)
-                        # Bottom Combined Score
-                        cp = round(pf + pa, 1)
-                        wnnr = ownr if win else opp
-                        losr = opp if win else ownr
-                        if [wnnr, year, week, sorted([pf, pa], reverse = True), losr] not in league['Records']['Min Combined Games'] and not schedule[year][week]['Data']['Postseason']:
-                            if cp < min(league['Records']['Min Combined List']):
-                                temp_acm = league['Records']['Min Combined List'][:-1]
-                                temp_bcm = league['Records']['Min Combined Games'][:-1]
-                            elif cp == min(league['Records']['Min Combined List']):
-                                temp_acm = league['Records']['Min Combined List']
-                                temp_bcm = league['Records']['Min Combined Games']
-                            temp_acm.append(cp)
-                            temp_bcm.append([wnnr, year, week, sorted([pf, pa], reverse = True), losr])
-                            temp_ascm = sorted(temp_acm, key=lambda param: param, reverse=False)
-                            temp_bscm = sorted(temp_bcm, key=lambda param: (sum(param[3]), param[1], param[2]), reverse=False)
-                            while len(temp_ascm) > 10:
-                                temp_ascm = temp_ascm[:-1]
-                                temp_bscm = temp_bscm[:-1]
-                            league['Records']['Min Combined List'] = list(temp_ascm)
-                            league['Records']['Min Combined Games'] = list(temp_bscm)
-
-                        name_opp = schedule[year][week][ownr]['Opponent Name']
-                        ws = schedule[year][week][ownr]['Ws']
-                        ls = schedule[year][week][ownr]['Ls']
-                        ts = schedule[year][week][ownr]['Ts']
-                    else:
-                        if schedule[year][week][ownr]['Playoff'] and year not in teams[ownr]['Appearances']:
-                            teams[ownr]['Appearances'].append(year)
-                            teams[ownr][year]['Playoffs'] = True
-                        else:
-                            pass
-                elif ownr in [jimmy, rande] and year == '2010':
-                    pass
-                elif ownr == tom and year == '2013':
-                    pass
-                elif ownr == cody and year != '2013':
-                    pass
-                elif schedule[year][week]['Data']['Postseason']:
-                    if ownr not in schedule[year][week].keys():
-                        teams[ownr]['Byes'].append(year)
-                        teams[ownr][year]['Bye'] = True
-                        if year not in teams[ownr]['Appearances']:
-                            teams[ownr]['Appearances'].append(year)
-                            teams[ownr][year]['Playoffs'] = True
-                    else:
-                        pass
-                else:
-                    schedule[year][week][ownr]
+        name_opp = schedule[year][week][ownr]['Opponent Name']
+        ws = schedule[year][week][ownr]['Ws']
+        ls = schedule[year][week][ownr]['Ls']
+        ts = schedule[year][week][ownr]['Ts']
+    else:
+        if schedule[year][week][ownr]['Playoff'] and year not in teams[ownr]['Appearances']:
+            teams[ownr]['Appearances'].append(year)
+            teams[ownr][year]['Playoffs'] = True
+        else:
+            pass
+# elif ownr in [jimmy, rande] and year == '2010':
+#     pass
+# elif ownr == tom and year == '2013':
+#     pass
+# elif ownr == cody and year != '2013':
+#     pass
+# elif schedule[year][week]['Data']['Postseason']:
+#     if ownr not in schedule[year][week].keys():
+#         teams[ownr]['Byes'].append(year)
+#         teams[ownr][year]['Bye'] = True
+#         if year not in teams[ownr]['Appearances']:
+#             teams[ownr]['Appearances'].append(year)
+#             teams[ownr][year]['Playoffs'] = True
+#     else:
+#         pass
+# else:
+#     schedule[year][week][ownr]
 
             # Begin yearly records
             # Most PF
@@ -1622,9 +1481,12 @@ def output_rankings():
 
 def main():
     thug_island = league.League("Thug Island")
-    game_analysis(thug_island,
-                  xlrd.open_workbook('resources/thug_island_history.xls'),
-                  ['2010', '2011', '2012', '2013', '2014', '2015', '2016'])
+
+    work_book = xlrd.open_workbook('resources/thug_island_history.xls')
+    years = ['2010', '2011', '2012', '2013', '2014', '2015', '2016']
+    for yi, year in enumerate(years):
+        work_sheet = work_book.sheet_by_index(yi)
+        thug_island.add_schedule(year, work_sheet)
 
     ownr = "Stuart Petty"
     yr = "2015"
