@@ -1159,6 +1159,7 @@ def output_rankings():
     for line in f.read().split('\n'): print line
     f.close()
 
+
 def main():
     thug_island = league.League("Thug Island")
 

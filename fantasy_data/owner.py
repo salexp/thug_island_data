@@ -24,6 +24,7 @@ class Owner:
         self.playoffs = []
         self.playoff_games = []
         self.records = Records()
+        self.seasons = {}
         self.team_names = []
 
     def add_matchup(self, game, side):
@@ -39,6 +40,7 @@ class Owner:
         op_div = matchup.opponent.division
 
         if played:
+            self.add_season(matchup)
             self.check_personal(matchup)
             self.league.records.check_records(matchup)
             records = []
@@ -123,6 +125,13 @@ class Owner:
             self.playoffs.append(year)
             self.playoffs = sorted(self.playoffs)
 
+    def add_season(self, matchup):
+        if not self.seasons.get(matchup.year):
+            self.seasons[matchup.year] = OwnerSeason(self, matchup)
+            self.league.years[matchup.year].owner_seasons[self.name] = self.seasons[matchup.year]
+        season = self.seasons[matchup.year]
+        season.add_matchup(matchup)
+
     def add_team_name(self, name):
         if name not in self.team_names:
             self.team_names.append(name)
@@ -166,12 +175,15 @@ class Owner:
             sorted(rcd, key=lambda param: (param.pf + param.pa), reverse=False)
 
 
-class Matchup():
+class Matchup:
     def __init__(self, game, side):
         self.bench = []
         self.game = game
         self.ir = []
+        self.owner_name = game.away_owner_name if side == "Away" else game.home_owner_name
         self.starters = []
+        self.team_name = game.away_team if side == "Away" else game.home_team
+        self.team_name_opponent = game.home_team if side == "Away" else game.away_team
         self.week = game.week
         self.year = game.year
         if side in ["Away", "Home"]:
@@ -186,6 +198,24 @@ class Matchup():
                 self.tie = game.winner == "Tie"
                 self.pf = game.away_score if away else game.home_score
                 self.pa = game.home_score if away else game.away_score
+
+
+class OwnerSeason:
+    def __init__(self, owner, matchup):
+        self.matchups = []
+        self.owner = owner
+        self.owner_name = owner.name
+        self.pf = 0.0
+        self.pa = 0.0
+        self.records = None
+        self.year = matchup.year
+
+    def add_matchup(self, matchup):
+        self.matchups.append(matchup)
+        self.pf += matchup.pf
+        self.pa += matchup.pa
+        self.ppg = self.pf / len(self.matchups)
+        self.pag = self.pa / len(self.matchups)
 
 
 class Records:

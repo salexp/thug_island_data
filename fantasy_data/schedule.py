@@ -4,6 +4,7 @@ from nfl_data import player
 
 class Schedule:
     def __init__(self, league, sh, year):
+        self.complete = False
         self.league = league
         self.year = year
 
@@ -16,6 +17,7 @@ class Schedule:
                 wek += 1
                 week = Week(self, str(wek), sh, r)
                 self.add_week(week)
+                self.complete = week.complete
 
     def add_week(self, w):
         self.week_list.append(w.number)
@@ -24,6 +26,7 @@ class Schedule:
 
 class Week:
     def __init__(self, schedule, wek, sh, i):
+        self.complete = False
         self.league = schedule.league
         self.schedule = schedule
         self.number = wek
@@ -39,6 +42,8 @@ class Week:
                 row = [sh.cell_value(i, c) for c in range(sh.ncols)]
                 game = Game(self, row, index=idx, detailed=False)
                 self.games.append(game)
+                if game.played:
+                    self.complete = True
             i += 1
             if i == sh.nrows:
                 break
