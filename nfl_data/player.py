@@ -12,19 +12,34 @@ class Player:
         self.started = []
 
     def update(self, matchup, info, slot):
+        plyr_game = PlayerGame(self, matchup, info, slot)
         self.games_owned += 1
-        self.owned.append(matchup)
-        try:
-            self.points += info[4]
-        except TypeError:
-            pass
+        self.owned.append(plyr_game)
+        self.points += plyr_game.points
         self.ppg = self.points / self.games_owned
-        if slot not in ["Bench", "IR"]:
+        if plyr_game.slot not in ["Bench", "IR"]:
             self.games_started += 1
-            self.started.append(matchup)
-        elif slot == "IR":
+            self.started.append(plyr_game)
+            matchup.starters.append(plyr_game)
+        elif plyr_game.slot == "IR":
             self.games_ir += 1
-            self.ir.append(matchup)
+            self.ir.append(plyr_game)
+            matchup.ir.append(plyr_game)
+        elif plyr_game.slot == "Bench":
+            matchup.bench.append(plyr_game)
+
+
+class PlayerGame:
+    def __init__(self, player, matchup, info, slot):
+        self.matchup = matchup
+        self.name = player.name
+        self.player = player
+        self.slot = slot
+
+        try:
+            self.points = float(info[4])
+        except ValueError:
+            self.points = 0
 
 
 def get_name(st):

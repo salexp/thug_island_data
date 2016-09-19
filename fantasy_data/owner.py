@@ -15,12 +15,14 @@ divisions = {
 
 class Owner:
     def __init__(self, name, league):
-        self.appearances = []
         self.championships = []
+        self.championship_games = []
         self.division = divisions[name]
         self.games = {}
         self.league = league
         self.name = name
+        self.playoffs = []
+        self.playoff_games = []
         self.records = Records()
         self.team_names = []
 
@@ -81,6 +83,7 @@ class Owner:
                 records.append(self.records.postseason[game.year])
 
             if game.is_playoffs:
+                self.playoff_games.append(matchup)
                 # Playoffs all time
                 records.append(self.records.playoffs["All"])
                 # Playoffs year
@@ -90,13 +93,15 @@ class Owner:
                 records.append(self.records.playoffs[game.year])
 
             if game.is_championship:
+                self.championship_games.append(matchup)
                 # Championships all time
                 records.append(self.records.championships["All"])
                 # Championships year
                 if not self.records.championships.get(game.year):
                     self.records.championships[game.year] = Record()
-                    self.add_championship(game.year)
                 records.append(self.records.championships[game.year])
+            if game.is_championship and matchup.won:
+                    self.add_championship(game.year)
 
             for record in records:
                 record.all += 1
@@ -114,9 +119,9 @@ class Owner:
             self.championships = sorted(self.championships)
 
     def add_playoff_appearance(self, year):
-        if year not in self.appearances:
-            self.appearances.append(year)
-            self.appearances = sorted(self.appearances)
+        if year not in self.playoffs:
+            self.playoffs.append(year)
+            self.playoffs = sorted(self.playoffs)
 
     def add_team_name(self, name):
         if name not in self.team_names:
@@ -163,7 +168,10 @@ class Owner:
 
 class Matchup():
     def __init__(self, game, side):
+        self.bench = []
         self.game = game
+        self.ir = []
+        self.starters = []
         self.week = game.week
         self.year = game.year
         if side in ["Away", "Home"]:
