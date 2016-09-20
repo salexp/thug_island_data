@@ -1,3 +1,6 @@
+from nfl_data import roster
+from util import *
+
 divisions = {
     "Andrew Lee": "East",
     "Ben Mytelka": "West",
@@ -15,6 +18,7 @@ divisions = {
 
 class Owner:
     def __init__(self, name, league):
+        self.active = []
         self.championships = []
         self.championship_games = []
         self.division = divisions[name]
@@ -23,7 +27,7 @@ class Owner:
         self.name = name
         self.playoffs = []
         self.playoff_games = []
-        self.records = Records()
+        self.records = Records(self)
         self.seasons = {}
         self.team_names = []
 
@@ -129,6 +133,7 @@ class Owner:
         if not self.seasons.get(matchup.year):
             self.seasons[matchup.year] = OwnerSeason(self, matchup)
             self.league.years[matchup.year].owner_seasons[self.name] = self.seasons[matchup.year]
+            self.active.append(matchup.year)
         season = self.seasons[matchup.year]
         season.add_matchup(matchup)
 
@@ -147,14 +152,15 @@ class Owner:
         self.records.personal["Most PF"] = \
             sorted(rcd, key=lambda param: param.pf, reverse=True)
 
-        rcd = self.records.personal["Least PF"]
-        if len(rcd) < 10:
-            rcd.append(matchup)
-        else:
-            if rcd[-1].pf > matchup.pf:
-                rcd[-1] = matchup
-        self.records.personal["Least PF"] = \
-            sorted(rcd, key=lambda param: param.pf, reverse=False)
+        rcd = self.records.personal["Fewest PF"]
+        if not matchup.game.is_consolation:
+            if len(rcd) < 10:
+                rcd.append(matchup)
+            else:
+                if rcd[-1].pf > matchup.pf:
+                    rcd[-1] = matchup
+            self.records.personal["Fewest PF"] = \
+                sorted(rcd, key=lambda param: param.pf, reverse=False)
 
         rcd = self.records.personal["Highest Scoring"]
         if len(rcd) < 10:
@@ -166,22 +172,33 @@ class Owner:
             sorted(rcd, key=lambda param: (param.pf + param.pa), reverse=True)
 
         rcd = self.records.personal["Lowest Scoring"]
-        if len(rcd) < 10:
-            rcd.append(matchup)
-        else:
-            if rcd[-1].pf + rcd[-1].pa > matchup.pf + matchup.pa:
-                rcd[-1] = matchup
-        self.records.personal["Lowest Scoring"] = \
-            sorted(rcd, key=lambda param: (param.pf + param.pa), reverse=False)
+        if not matchup.game.is_consolation:
+            if len(rcd) < 10:
+                rcd.append(matchup)
+            else:
+                if rcd[-1].pf + rcd[-1].pa > matchup.pf + matchup.pa:
+                    rcd[-1] = matchup
+            self.records.personal["Lowest Scoring"] = \
+                sorted(rcd, key=lambda param: (param.pf + param.pa), reverse=False)
+
+    def check_roster(self, matchup):
+        rcd = self.records.alltime_roster
+        for plyr in matchup.roster.starters + matchup.roster.bench:
+            rcd.add_player(plyr, force="Bench")
+
+        rcd.make_optimal()
+        opt = rcd.optimal
+        opt.update_points()
+        self.records.alltime_roster = opt
 
 
 class Matchup:
     def __init__(self, game, side):
-        self.bench = []
+        self.away = side == "Away"
         self.game = game
-        self.ir = []
+        self.home = side == "Home"
         self.owner_name = game.away_owner_name if side == "Away" else game.home_owner_name
-        self.starters = []
+        self.roster = roster.GameRoster()
         self.team_name = game.away_team if side == "Away" else game.home_team
         self.team_name_opponent = game.home_team if side == "Away" else game.away_team
         self.week = game.week
@@ -219,15 +236,73 @@ class OwnerSeason:
 
 
 class Records:
-    def __init__(self):
+    def __init__(self, owner):
+        self.alltime_roster = roster.GameRoster()
         self.championships = {"All": Record()}
         self.divisions = {"East": {"All": Record()}, "West": {"All": Record()}}
+        self.owner = owner
         self.opponents = {}
         self.overall = {"All": Record()}
         self.playoffs = {"All": Record()}
-        self.personal = {"Most PF": [], "Least PF": [], "Highest Scoring": [], "Lowest Scoring": []}
+        self.personal = {"Most PF": [], "Fewest PF": [], "Highest Scoring": [], "Lowest Scoring": []}
         self.postseason = {"All": Record()}
         self.regular_season = {"All": Record()}
+
+    def to_string(self, info=True, ovrl="All", reg="All", post=False, plyf="All", div="All", opp="All", rcds="All"):
+        str = "[b]" + self.owner.name + "[/b]\n"
+        if info:
+            ownr = self.owner
+            str += "[u]Division[/u]: {}\n".format(ownr.division)
+            str += "[u]Season{} Active[/u]: {}\n".format("" if len(ownr.active) == 1 else "s",
+                                                         consecutive_years(ownr.active))
+            str += "[u]Playoff Appearance{}[/u]: {}\n".format("" if len(ownr.playoffs) == 1 else "s",
+                                                              consecutive_years(ownr.playoffs))
+            str += "[u]Championship{}[/u]: {}\n\n".format("" if len(ownr.championships) == 1 else "s",
+                                                          consecutive_years(ownr.championships))
+        if ovrl:
+            str += "[u]Overall[/u]: {}\n".format(self.overall[ovrl].to_string())
+        if reg:
+            str += "[u]Regular Season[/u]: {}\n".format(self.regular_season[reg].to_string())
+        if post:
+            str += "[u]Postseason[/u]: {}\n".format(self.postseason[post].to_string())
+        if plyf:
+            str += "[u]Playoffs[/u]: {}\n".format(self.playoffs[plyf].to_string())
+        if div:
+            str += "[u]East[/u]: {}\n".format(self.divisions["East"][div].to_string())
+            str += "[u]West[/u]: {}\n".format(self.divisions["West"][div].to_string())
+        if opp:
+            ownrs = sorted([o for o in self.owner.league.owners], key=lambda p: (p[0].upper(), p[1]))
+            ownrs.remove(self.owner.name)
+            for i, on in enumerate(ownrs):
+                str += "[u]{}[/u]: {}\n".format(on.split(" ")[0], self.opponents[on][opp].to_string())
+            str += "\n"
+        if rcds:
+            mtch = self.personal["Most PF"][0]
+            str += "[u]Most PF[/u]: {} pts, {} {} {} {} week {}\n".format(mtch.pf,
+                                                                          "won" if mtch.won else "lost",
+                                                                          "vs" if mtch.home else "at",
+                                                                          mtch.opponent.name,
+                                                                          mtch.year, mtch.week.number)
+            mtch = self.personal["Fewest PF"][0]
+            str += "[u]Fewest PF[/u]: {} pts, {} {} {} {} week {}\n".format(mtch.pf,
+                                                                            "won" if mtch.won else "lost",
+                                                                            "vs" if mtch.home else "at",
+                                                                            mtch.opponent.name,
+                                                                            mtch.year, mtch.week.number)
+            mtch = self.personal["Highest Scoring"][0]
+            str += "[u]Highest Scoring[/u]: {}, {} {} {} {} week {}\n".format(make_score(mtch.pf, mtch.pa),
+                                                                              "won" if mtch.won else "lost",
+                                                                              "vs" if mtch.home else "at",
+                                                                              mtch.opponent.name,
+                                                                              mtch.year, mtch.week.number)
+            mtch = self.personal["Lowest Scoring"][0]
+            str += "[u]Lowest Scoring[/u]: {}, {} {} {} {} week {}\n".format(make_score(mtch.pf, mtch.pa),
+                                                                             "won" if mtch.won else "lost",
+                                                                             "vs" if mtch.home else "at",
+                                                                             mtch.opponent.name,
+                                                                             mtch.year, mtch.week.number)
+
+        return str
 
 
 class Record:
@@ -238,3 +313,15 @@ class Record:
         self.ties = 0
         self.pf = 0.0
         self.pa = 0.0
+
+    def to_string(self, wlt=True, pfpa=True):
+        str = ""
+        if wlt:
+            str += "{0:.0f}-{1:.0f}".format(self.wins, self.losses)
+            if self.ties > 0:
+                str += "-{0:.0f}".format(self.ties)
+
+        if pfpa:
+            str += " ({0:.1f}-{1:.1f})".format(self.pf/self.all, self.pa/self.all)
+
+        return str

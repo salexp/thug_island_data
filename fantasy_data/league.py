@@ -48,7 +48,7 @@ class League:
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pf, reverse=True)
 
-                elif key == "Least PF":
+                elif key == "Fewest PF":
                     rcd = records[key]
                     if len(rcd) < 10:
                         rcd.append(ownr_season)
@@ -68,7 +68,7 @@ class League:
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pa, reverse=True)
 
-                elif key == "Least PA":
+                elif key == "Fewest PA":
                     rcd = records[key]
                     if len(rcd) < 10:
                         rcd.append(ownr_season)
@@ -86,6 +86,16 @@ class League:
 
         return found
 
+    def to_string(self, owners=True):
+        str = ""
+        if owners:
+            ownrs = sorted([o for o in self.owners], key=lambda p: (p[0].upper(), p[1]))
+            for o in ownrs:
+                str += self.owners[o].records.to_string()
+                str += "\n"
+
+        return str
+
 
 class Year:
     def __init__(self):
@@ -97,8 +107,8 @@ class Records:
     def __init__(self, league):
         self.league = league
         self.games = {"Highest Scoring": [], "Lowest Scoring": []}
-        self.season = {"Most PF": [], "Least PF": [], "Most PA": [], "Least PA": []}
-        self.teams = {"Most PF": [], "Least PF": []}
+        self.season = {"Most PF": [], "Fewest PF": [], "Most PA": [], "Fewest PA": []}
+        self.teams = {"Most PF": [], "Fewest PF": []}
 
     def check_records(self, matchup, key=None):
         if key is not None:
@@ -119,7 +129,7 @@ class Records:
                 self.league.records.teams[key] = \
                     sorted(rcd, key=lambda param: param.pf, reverse=True)
 
-            elif key == "Least PF":
+            elif key == "Fewest PF":
                 rcd = self.league.records.teams[key]
                 if len(rcd) < 10:
                     rcd.append(matchup)

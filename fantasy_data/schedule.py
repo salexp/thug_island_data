@@ -89,11 +89,13 @@ class Game:
         self.raw_details = None
         self.raw_summary = None
         self.schedule = week.schedule
+        self.score = None
         self.week = week
         self.winner = None
         self.year = week.year
         self.is_regular_season = is_regular_season(self.year, self.week.number, self.index)
         self.is_postseason = is_postseason(self.year, self.week.number, self.index)
+        self.is_consolation = is_consolation(self.year, self.week.number, self.index)
         self.is_playoffs = is_playoffs(self.year, self.week.number, self.index)
         self.is_championship = is_championship(self.year, self.week.number, self.index)
 
@@ -111,6 +113,7 @@ class Game:
         score = row[5]
         if score not in ["", "Preview"]:
             self.played = True
+            self.score = score
 
         if self.away_owner_name not in self.league.owners:
             self.league.owners[self.away_owner_name] = owner.Owner(self.away_owner_name, self.league)
@@ -175,7 +178,7 @@ class Game:
             else:
                 self.away_roster = roster
 
-        True
+            owner.check_roster(mtup)
 
 
 def is_regular_season(year, week, game):
@@ -192,6 +195,10 @@ def is_postseason(year, week, game):
     game = int(game)
 
     return week > 13
+
+
+def is_consolation(year, week, game):
+    return is_postseason(year, week, game) and not is_playoffs(year, week, game)
 
 
 def is_playoffs(year, week, game):

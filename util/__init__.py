@@ -1,9 +1,5 @@
-def add_all_players(plyr, pos = None):
-    if plyr not in all_players.keys(): all_players[plyr] = {}
-    if year not in all_players[plyr].keys(): all_players[plyr][year] = {'Position' : pos, 'Team' : None, 'Scores' : []}
-    if 'Current Owner' not in all_players[plyr].keys(): all_players[plyr]['Current Owner'] = None
-    if 'Drafted' not in all_players[plyr].keys(): all_players[plyr]['Drafted'] = []
-    if 'Keeper' not in all_players[plyr].keys(): all_players[plyr]['Keeper'] = []
+from itertools import groupby
+from operator import itemgetter
 
 
 def add_ranks(list, comp = None):
@@ -64,20 +60,26 @@ def average(list, rnd = 1):
     return avg
 
 
-def f_played_weeks(dict):
-    plyd = []
-    for wk in range(1, 16):
-        if ranks[str(wk)]['Played']: plyd.append(str(wk))
+def consecutive_years(years):
+    ranges = []
+    yrs = [int(y) for y in years]
+    for key, group in groupby(enumerate(yrs), lambda (index, item): index - item):
+        group = map(itemgetter(1), group)
+        ranges.append((group[0], group[-1]))
 
-    return plyd
+    str = ""
+    for i, rng in enumerate(ranges):
+        if rng[0] == rng[1]:
+            str += "{}".format(rng[0])
+        else:
+            str += "{}-{}".format(rng[0], rng[1])
+        if i < len(ranges)-1:
+            str += ", "
 
+    if str == "":
+        str = "None"
 
-def f_current_week(dict):
-    plyd = []
-    for wk in range(1, 17):
-        plyd.append(ranks[str(wk)]['Played'])
-
-    return str(plyd.index(False))
+    return str
 
 
 def get_initials(name):
@@ -85,15 +87,6 @@ def get_initials(name):
     li = name.split(' ')[1][0]
 
     return fi + li
-
-
-def get_name(yr, xr, sht):
-    if 'D/ST' not in sht.cell_value(yr, xr):
-        nam = sht.cell_value(yr, xr).split(',')[0].replace('*', '')
-    else:
-        nam = sht.cell_value(yr, xr).split(u'\xa0')[0].replace('*', '').split(',')[0]
-
-    return nam
 
 
 def get_team(yr, xr, sht):
@@ -116,21 +109,8 @@ def get_oppnt(yr, xr):
     return oppnt
 
 
-def get_score(yr, xr):
-    val = sh.cell_value(yr, xr)
-    if '--' == val:
-        scr = 0.0
-    else:
-        scr = round(val, 1)
-
-    return scr
-
-
-def make_record(list):
-    if list[2] != 0:
-        return '{0}-{1}-{2}'.format(list[0], list[1], list[2])
-    else:
-        return '{0}-{1}'.format(list[0], list[1])
+def make_score(pa, pb):
+    return "{}-{}".format(pa if pa > pb else pb, pa if pa < pb else pb)
 
 
 def normpdf(x, mu = 1.0, sigma = 1.0):

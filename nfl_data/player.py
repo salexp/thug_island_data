@@ -17,16 +17,13 @@ class Player:
         self.owned.append(plyr_game)
         self.points += plyr_game.points
         self.ppg = self.points / self.games_owned
+        matchup.roster.add_player(plyr_game)
         if plyr_game.slot not in ["Bench", "IR"]:
             self.games_started += 1
             self.started.append(plyr_game)
-            matchup.starters.append(plyr_game)
         elif plyr_game.slot == "IR":
             self.games_ir += 1
             self.ir.append(plyr_game)
-            matchup.ir.append(plyr_game)
-        elif plyr_game.slot == "Bench":
-            matchup.bench.append(plyr_game)
 
 
 class PlayerGame:
@@ -51,6 +48,7 @@ def get_name(st):
 
 
 def get_position(st):
+    st = st.replace(u'\xa0', u' ')
     if "QB" in st:
         pos = "QB"
     elif "RB" in st:

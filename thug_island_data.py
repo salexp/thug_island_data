@@ -109,19 +109,6 @@ def drafted_players(_ownrs, _teams):
             print ''
 
 
-def find_matchups():
-    opp_dict = {'QB' : [], 'RB' : [], 'WR' : [], 'TE' : [], 'DST' : [], 'K' : []}
-    for pos in positions:
-        for tm in nfl_teams.keys():
-            opp_dict[pos].append([tm, average(nfl_teams[tm][pos]), len(nfl_teams[tm][pos])])
-
-        pos_lists = sorted(opp_dict[pos], key=lambda param: param[1], reverse=True)
-        print pos
-        for line in pos_lists: print line
-
-        print ''
-
-
 def playoff_hopes(_ownrs = owners, file = None):
     if file is not None:
         phf = open(file, 'w')
@@ -243,199 +230,44 @@ def draft_history():
 
 
 def ranking_analysis():
-    book = xlrd.open_workbook('thug_island_ranks.xls')
-    positions = ['QB', 'RB', 'WR', 'TE', 'DST', 'K']
-    players = {'QB' : {}, 'RB' : {}, 'WR' : {}, 'TE' : {}, 'DST' : {}, 'K' : {}}
-    metrics = {}
-    if year == '2015':
-        west.remove(cody)
-        owners.remove(cody)
-
-    for week in range(1, 17):
-        weeks = str(week)
-        ranks[weeks] = {}
-        ranks[weeks]['Played'] = False
-        for owner in owners:
-            if week > 1:
-                ranks[weeks][owner] = {}
-                ranks[weeks][owner]['Starters'] = deepcopy(ranks[str(week - 1)][owner]['Starters'])
-                ranks[weeks][owner]['Starters']['Players'] = []
-                ranks[weeks][owner]['Bench'] = deepcopy(ranks[str(week - 1)][owner]['Bench'])
-                ranks[weeks][owner]['Bench']['Players'] = []
-                ranks[weeks][owner]['IR'] = deepcopy(ranks[str(week - 1)][owner]['IR'])
-                ranks[weeks][owner]['IR']['Players'] = []
-                ranks[weeks][owner]['Week Points'] = list(ranks[str(week - 1)][owner]['Week Points'])
-                ranks[weeks][owner]['Max Points'] = list(ranks[str(week - 1)][owner]['Max Points'])
-                ranks[weeks][owner]['Stat'] = list(ranks[str(week - 1)][owner]['Stat'])
+    pnts = []
+    ypnts = []
+    for year in years:
+        if year < years[-1]:
+            if (year == '2013' and ownr == tom) or (year == '2010' and ownr in [jimmy, rande]):
+                pass
             else:
-                ranks[weeks][owner] = {}
-                ranks[weeks][owner]['Starters'] = {'QB' : [[], 0.0, 0], 'RB' : [[], 0.0, 0], 'WR' : [[], 0.0, 0], 'TE' : [[], 0.0, 0], 'DST' : [[], 0.0, 0], 'K' : [[], 0.0, 0], 'Total' : [[], 0.0, 0], 'Players' : []}
-                ranks[weeks][owner]['Bench'] = {'QB' : [[], 0.0, 0], 'RB' : [[], 0.0, 0], 'WR' : [[], 0.0, 0], 'TE' : [[], 0.0, 0], 'DST' : [[], 0.0, 0], 'K' : [[], 0.0, 0], 'Total' : [[], 0.0, 0], 'Players' : []}
-                ranks[weeks][owner]['IR'] = {'Players' : []}
-                ranks[weeks][owner]['Week Points'] = []
-                ranks[weeks][owner]['Max Points'] = []
-            ranks[weeks][owner]['Record'] = list(teams[owner][year]['Record'])
-        sh = book.sheet_by_index(int(week - 1))
-        try:
-            avail = sh.cell_value(1,0) in owners
-        except:
-            pass
+                for i in range(13):
+                    iis = str(i + 1)
+                    # pnts += [schedule[year][iis][ownr]['PF'] for x in range((years.index(year) + 1) ** (years.index(year) + 1))]
+                    pnts += [schedule[year][iis][ownr]['PF']]
         else:
-            for plyr in all_players.keys():
-                all_players[plyr]['Current Owner'] = None
-            ranks[weeks]['Played'] = True
-            for pos in positions: players[pos][weeks] = {}
-            for game in range(5):
-                try:
-                    team_a = sh.cell_value(1, 6 * game)
-                    team_b = sh.cell_value(5, 6 * game)
-                except:
-                    if game == 4 and weeks == '14':
-                        break
-                extra_bench = 0
-                for ownr in [team_a, team_b]:
-                    if ownr == team_a: shift = -1
-                    if ownr == team_b: shift = 27
-                    wk_plyrs = {'QB' : [[], [], []], 'RB' : [[], []], 'WR' : [[], []], 'TE' : [[], []], 'DST' : [[], []], 'K' : [[], []], 'Points' : 0.0, 'Max Points' : 0.0, 'Players' : []}
-                    for poslt in [['QB', 14], ['RB', 15], ['RB', 16], ['WR', 18], ['WR', 19], ['TE', 20], ['DST', 21], ['K', 22], ['Flex', 17], ['Bench', 27], ['IR', 35]]:
-                        postn = poslt[0]
-                        rowr = poslt[1]
-                        if postn not in ['Flex', 'Bench', 'IR']:
-                            wk_plyrs[postn][0].append(get_score(rowr + shift + extra_bench, 4 + 6 * game))
-                            ranks[weeks][ownr]['Starters'][postn][0].append(get_score(rowr + shift + extra_bench, 4 + 6 * game))
-                            ranks[weeks][ownr]['Starters'][postn][1] += 1.0
-                            plyr = get_name(rowr + shift + extra_bench, 1 + 6 * game, sh)
-                            ranks[weeks][ownr]['Starters']['Players'].append(plyr)
-                            players[postn][weeks][plyr] = {'Score' : get_score(rowr + shift + extra_bench, 4 + 6 * game), 'Owner' : ownr, 'Starter' : True, 'Opponent' : get_oppnt(rowr + shift + extra_bench, 2 + 6 * game)}
-                            add_all_players(plyr, [postn])
-                            all_players[plyr][year]['Scores'].append(get_score(rowr + shift + extra_bench, 4 + 6 * game))
-                            if plyr != '':
-                                if plyr not in nfl_teams[get_team(rowr + shift + extra_bench, 1 + 6 * game, sh)]['Players'][postn].keys():
-                                    nfl_teams[get_team(rowr + shift + extra_bench, 1 + 6 * game, sh)]['Players'][postn][plyr] = []
-                                nfl_teams[get_team(rowr + shift + extra_bench, 1 + 6 * game, sh)]['Players'][postn][plyr].append(players[postn][weeks][plyr]['Score'])
-                                nfl_teams[players[postn][weeks][plyr]['Opponent']][postn].append(players[postn][weeks][plyr]['Score'])
-                            if plyr not in all_players.keys():
-                                all_players[plyr] = {'Drafted' : [], 'Keeper' : [], 'Current Owner' : None}
-                            all_players[plyr]['Current Owner'] = ownr
-                        elif postn == 'Flex':
-                            if get_position(rowr + shift + extra_bench, 1 + 6 * game, sh)[0] is not None:
-                                wk_plyrs[get_position(rowr + shift + extra_bench, 1 + 6 * game, sh)[0]][0].append(get_score(rowr + shift + extra_bench, 4 + 6 * game))
-                                plyr = get_name(rowr + shift + extra_bench, 1 + 6 * game, sh)
-                                players[get_position(rowr + shift + extra_bench, 1 + 6 * game, sh)[0]][weeks][plyr] = {'Score' : get_score(rowr + shift + extra_bench, 4 + 6 * game), 'Owner' : ownr, 'Starter' : True, 'Opponent' : get_oppnt(rowr + shift + extra_bench, 2 + 6 * game)}
-                                add_all_players(plyr, get_position(rowr + shift + extra_bench, 1 + 6 * game, sh))
-                                all_players[plyr][year]['Scores'].append(get_score(rowr + shift + extra_bench, 4 + 6 * game))
-                                if plyr not in all_players.keys():
-                                    all_players[plyr] = {'Drafted' : [], 'Keeper' : [], 'Current Owner' : None}
-                                all_players[plyr]['Current Owner'] = ownr
-                                ranks[weeks][ownr]['Starters']['Players'].append(plyr)
-                                for pos in get_position(rowr + shift + extra_bench, 1 + 6 * game, sh):
-                                    ranks[weeks][ownr]['Starters'][pos][0].append(get_score(rowr + shift + extra_bench, 4 + 6 * game) / len(get_position(rowr + shift + extra_bench, 1 + 6 * game, sh)))
-                                    ranks[weeks][ownr]['Starters'][pos][1] += 1.0 / len(get_position(rowr + shift + extra_bench, 1 + 6 * game, sh))
-                        elif postn == 'Bench':
-                            found_ir = False
-                            for bnch in range(rowr, 99):      # 35-1 is usually last for standard bench
-                                for pos in get_position(bnch + shift + extra_bench, 1 + 6 * game, sh):
-                                    if pos != None:
-                                        plyr = get_name(bnch + shift + extra_bench, 1 + 6 * game, sh)
-                                        ranks[weeks][ownr]['Bench']['Players'].append(plyr)
-                                        players[get_position(bnch + shift + extra_bench, 1 + 6 * game, sh)[0]][weeks][plyr] = {'Score' : get_score(bnch + shift + extra_bench, 4 + 6 * game), 'Owner' : ownr, 'Starter' : False, 'Opponent' : get_oppnt(bnch + shift + extra_bench, 2 + 6 * game)}
-                                        if plyr not in all_players.keys():
-                                            all_players[plyr] = {'Drafted' : [], 'Keeper' : [], 'Current Owner' : None}
-                                        all_players[plyr]['Current Owner'] = ownr
-                                        if 'BYE' not in sh.cell_value(bnch + shift + extra_bench, 2 + 6 * game):
-                                            wk_plyrs[pos][1].append(get_score(bnch + shift + extra_bench, 4 + 6 * game))
-                                            ranks[weeks][ownr]['Bench'][pos][0].append(get_score(bnch + shift + extra_bench, 4 + 6 * game))
-                                            ranks[weeks][ownr]['Bench'][pos][1] += 1.0 / len(get_position(bnch + shift + extra_bench, 1 + 6 * game, sh))
-                                            ranks[weeks][ownr]['Bench']['Total'][0].append(get_score(bnch + shift + extra_bench, 4 + 6 * game))
-                                            ranks[weeks][ownr]['Bench']['Total'][1] += 1.0 / len(get_position(bnch + shift + extra_bench, 1 + 6 * game, sh))
-                                            add_all_players(plyr, [pos])
-                                            all_players[plyr][year]['Scores'].append(get_score(bnch + shift + extra_bench, 4 + 6 * game))
-                                        else:
-                                            pass
-                                    if sh.cell_value(bnch + shift + extra_bench + 1, 0 + 6 * game) == 'IR':     # Stop looking for bench players if next player is on IR
-                                        found_ir = True
-                                        break
-                                if found_ir:
-                                    extra_bench = bnch - 34
-                                    break
-                        elif postn == 'IR':
-                            plyr = get_name(rowr + shift + extra_bench, 1 + 6 * game, sh)
-                            if plyr != '':
-                                ranks[weeks][ownr]['IR']['Players'].append(plyr)
-                            if plyr not in all_players.keys():
-                                all_players[plyr] = {'Drafted' : [], 'Keeper' : [], 'Current Owner' : None}
-                            all_players[plyr]['Current Owner'] = ownr
-
-                    for key in positions:
-                        ranks[weeks][ownr]['Starters']['Total'][0] += ranks[weeks][ownr]['Starters'][key][0]
-                        ranks[weeks][ownr]['Starters']['Total'][1] += ranks[weeks][ownr]['Starters'][key][1]
-                    qbs = wk_plyrs['QB'][0] + wk_plyrs['QB'][1]
-                    wk_plyrs['Max Points'] += max(qbs)
-                    qbs.remove(max(qbs))
-                    wrs = wk_plyrs['WR'][0] + wk_plyrs['WR'][1]
-                    wk_plyrs['Max Points'] += max(wrs)
-                    wrs.remove(max(wrs))
-                    wk_plyrs['Max Points'] += max(wrs)
-                    wrs.remove(max(wrs))
-                    rbs = wk_plyrs['RB'][0] + wk_plyrs['RB'][1]
-                    wk_plyrs['Max Points'] += max(rbs)
-                    rbs.remove(max(rbs))
-                    wk_plyrs['Max Points'] += max(rbs)
-                    rbs.remove(max(rbs))
-                    tes = wk_plyrs['TE'][0] + wk_plyrs['TE'][1]
-                    wk_plyrs['Max Points'] += max(tes)
-                    tes.remove(max(tes))
-                    flxs = wrs + rbs # + tes
-                    wk_plyrs['Max Points'] += max(flxs)
-                    flxs.remove(max(flxs))
-                    dsts = wk_plyrs['DST'][0] + wk_plyrs['DST'][1]
-                    wk_plyrs['Max Points'] += max(dsts)
-                    dsts.remove(max(dsts))
-                    ks = wk_plyrs['K'][0] + wk_plyrs['K'][1]
-                    wk_plyrs['Max Points'] += max(ks)
-                    ks.remove(max(ks))
-                    wk_plyrs['Points'] = sum([sum(wk_plyrs[pos][0]) for pos in positions])
-                    ranks[weeks][ownr]['Week Points'].append(wk_plyrs['Points'])
-                    ranks[weeks][ownr]['Max Points'].append(wk_plyrs['Max Points'])
-
-                    pnts = []
-                    ypnts = []
-                    for year in years:
-                        if year < years[-1]:
-                            if (year == '2013' and ownr == tom) or (year == '2010' and ownr in [jimmy, rande]):
-                                pass
-                            else:
-                                for i in range(13):
-                                    iis = str(i + 1)
-                                    # pnts += [schedule[year][iis][ownr]['PF'] for x in range((years.index(year) + 1) ** (years.index(year) + 1))]
-                                    pnts += [schedule[year][iis][ownr]['PF']]
-                        else:
-                            for i in range(week):
-                                # pnts += [schedule[year][str(i+1)][ownr]['PF'] for x in range((years.index(year) + 1) ** (years.index(year) + 1))]
-                                if ownr in schedule[year][str(i+1)].keys():
-                                    pnts += [schedule[year][str(i+1)][ownr]['PF']]
-                                    ypnts.append(schedule[year][str(i + 1)][ownr]['PF'])
-                                elif year in teams[ownr]['Byes']:
-                                    pass
-                                else:
-                                    pnts += [schedule[year][str(i+1)][ownr]['PF']]
-                                    ypnts.append(schedule[year][str(i + 1)][ownr]['PF'])
+            for i in range(week):
+                # pnts += [schedule[year][str(i+1)][ownr]['PF'] for x in range((years.index(year) + 1) ** (years.index(year) + 1))]
+                if ownr in schedule[year][str(i+1)].keys():
+                    pnts += [schedule[year][str(i+1)][ownr]['PF']]
+                    ypnts.append(schedule[year][str(i + 1)][ownr]['PF'])
+                elif year in teams[ownr]['Byes']:
+                    pass
+                else:
+                    pnts += [schedule[year][str(i+1)][ownr]['PF']]
+                    ypnts.append(schedule[year][str(i + 1)][ownr]['PF'])
 
 
-                    npnts = pnts[-13:]
-                    pnts = []
-                    i = 0
-                    for wpnt in npnts:
-                        i += 1
-                        pnts += [wpnt for j in range(i)]
+    npnts = pnts[-13:]
+    pnts = []
+    i = 0
+    for wpnt in npnts:
+        i += 1
+        pnts += [wpnt for j in range(i)]
 
-                    mu = sum(pnts) / len(pnts)
-                    ssq = sum([i**2 for i in pnts])
-                    sigma = (1.0 / len(pnts)) * (len(pnts) * ssq - sum(pnts) ** 2) ** (0.5)
-                    ymu = sum(ypnts) / len(ypnts)
-                    yssq = sum([i**2 for i in ypnts])
-                    ysigma = (1.0 / len(ypnts)) * (len(ypnts) * yssq - sum(ypnts) ** 2) ** (0.5)
-                    ranks[weeks][ownr]['Stat'] = [[mu, sigma, sum(pnts), ssq, len(pnts)], [ymu, ysigma, sum(ypnts), yssq, len(ypnts)]]
+    mu = sum(pnts) / len(pnts)
+    ssq = sum([i**2 for i in pnts])
+    sigma = (1.0 / len(pnts)) * (len(pnts) * ssq - sum(pnts) ** 2) ** (0.5)
+    ymu = sum(ypnts) / len(ypnts)
+    yssq = sum([i**2 for i in ypnts])
+    ysigma = (1.0 / len(ypnts)) * (len(ypnts) * yssq - sum(ypnts) ** 2) ** (0.5)
+    ranks[weeks][ownr]['Stat'] = [[mu, sigma, sum(pnts), ssq, len(pnts)], [ymu, ysigma, sum(ypnts), yssq, len(ypnts)]]
 
     played_weeks = f_played_weeks(ranks)
     current_week = f_current_week(ranks)
@@ -652,12 +484,7 @@ def ranking_analysis():
 
 
 def build_rosters():
-    for plyr in all_players.keys():
-        if plyr != '' and year in all_players[plyr].keys() and all_players[plyr]['Current Owner'] is not None:
-            ownr = all_players[plyr]['Current Owner']
-            poss = all_players[plyr][year]['Position']
-            for pos in poss:
-                teams[ownr]['Roster'][pos][plyr] = copy(all_players[plyr][year]['Scores'])
+    None
 
 
 def calculate_playoffs():
@@ -1166,8 +993,12 @@ def main():
     work_book = xlrd.open_workbook('resources/thug_island_history.xls')
     years = ['2010', '2011', '2012', '2013', '2014', '2015', '2016']
     for yi, year in enumerate(years):
+        if len(years) < 7:
+            yi = int(year[-1])
         work_sheet = work_book.sheet_by_index(yi)
         thug_island.add_schedule(year, work_sheet)
+
+    del thug_island.owners["Cody Blain"]
 
     years = ['2015', '2016']
     for year in years:
@@ -1183,6 +1014,8 @@ def main():
     week = schedule.weeks[wk]
     game = week.games[gm]
     matchup = owner.games[yr][wk]
+    roster = matchup.roster
+    print thug_island.to_string()
     True
     # team_analysis()
     # draft_history()
