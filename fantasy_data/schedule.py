@@ -18,6 +18,8 @@ class Schedule:
                 week = Week(self, str(wek), sh, r)
                 self.add_week(week)
                 self.complete = week.complete
+                if self.complete:
+                    self.league.years[year].current_week = week.number
 
     def add_week(self, w):
         self.week_list.append(w.number)

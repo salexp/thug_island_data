@@ -1005,6 +1005,8 @@ def main():
         work_book = xlrd.open_workbook('resources/thug_island_{}.xls'.format(year))
         thug_island.add_games(year, work_book)
 
+    thug_island.generate_rankings()
+
     ownr = "Stuart Petty"
     yr = "2015"
     wk = "3"
@@ -1015,7 +1017,10 @@ def main():
     game = week.games[gm]
     matchup = owner.games[yr][wk]
     roster = matchup.roster
-    print thug_island.to_string()
+    output = thug_island.to_string()
+    print output
+    with open("ff_data.txt", "w") as f:
+        print >> f, output
     True
     # team_analysis()
     # draft_history()

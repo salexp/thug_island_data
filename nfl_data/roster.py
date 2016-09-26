@@ -3,8 +3,10 @@ class GameRoster:
         self.qb = None
         self.rb1 = None
         self.rb2 = None
+        self.rb3 = None
         self.wr1 = None
         self.wr2 = None
+        self.wr3 = None
         self.flx = None
         self.te = None
         self.dst = None
@@ -12,7 +14,7 @@ class GameRoster:
         self.starters = []
         self.bench = []
         self.ir = None
-        self.start_points = 0.0
+        self.starter_points = 0.0
         self.bench_points = 0.0
         self.complete = False
         self.is_optimal = opt
@@ -21,37 +23,37 @@ class GameRoster:
     def add_player(self, plyr_game, force=None):
         if "QB" == plyr_game.slot and not force or force == "QB":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             self.qb = plyr_game
         elif "RB" == plyr_game.slot and not force or force == "RB":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             if self.rb1 is None:
                 self.rb1 = plyr_game
             else:
                 self.rb2 = plyr_game
         elif "WR" == plyr_game.slot and not force or force == "WR":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             if self.wr1 is None:
                 self.wr1 = plyr_game
             else:
                 self.wr2 = plyr_game
         elif "RB/WR" == plyr_game.slot and not force or force == "RB/WR":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             self.flx = plyr_game
         elif "TE" == plyr_game.slot and not force or force == "TE":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             self.te = plyr_game
         elif "D/ST" == plyr_game.slot and not force or force == "D/ST":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             self.dst = plyr_game
         elif "K" == plyr_game.slot and not force or force == "K":
             self.starters.append(plyr_game)
-            self.start_points += plyr_game.points
+            self.starter_points += plyr_game.points
             self.k = plyr_game
         elif "Bench" == plyr_game.slot and not force or force == "Bench":
             self.bench_points += plyr_game.points
@@ -65,8 +67,6 @@ class GameRoster:
 
         if self.complete:
             self.sort_skill_positions()
-        if self.complete and not self.is_optimal:
-            self.make_optimal()
 
     def sort_skill_positions(self):
         rbs = []
@@ -89,6 +89,8 @@ class GameRoster:
         self.wr1 = wrs[0] if len(wrs) > 0 else None
         self.wr2 = wrs[1] if len(wrs) > 1 else None
         self.flx = rbs[2] if len(rbs) > 2 else wrs[2] if len(wrs) > 2 else None
+        self.rb3 = self.flx if pos == "RB" else None
+        self.wr3 = self.flx if pos == "WR" else None
 
     def make_optimal(self):
         opt = GameRoster(opt=True)
@@ -165,5 +167,5 @@ class GameRoster:
         self.optimal = opt
 
     def update_points(self):
-        self.start_points = self.qb.points + self.rb1.points + self.rb2.points + self.wr1.points + self.wr2.points + self.flx.points + self.te.points + self.dst.points + self.k.points
+        self.starter_points = self.qb.points + self.rb1.points + self.rb2.points + self.wr1.points + self.wr2.points + self.flx.points + self.te.points + self.dst.points + self.k.points
         self.bench_points = sum([p.points for p in self.bench])

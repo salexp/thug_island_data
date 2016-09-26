@@ -48,6 +48,9 @@ def add_suffix(num):
     else:
         new = num + 'th'
 
+    if len(new) == 3:
+        new += ")"
+
     return new
 
 

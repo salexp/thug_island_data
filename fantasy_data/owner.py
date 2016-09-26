@@ -18,6 +18,7 @@ divisions = {
 
 class Owner:
     def __init__(self, name, league):
+        self._attrb = Attributes()
         self.active = []
         self.championships = []
         self.championship_games = []
@@ -219,20 +220,50 @@ class Matchup:
 
 class OwnerSeason:
     def __init__(self, owner, matchup):
+        self.championship = False
+        self.games = 0
         self.matchups = []
         self.owner = owner
         self.owner_name = owner.name
+        self.playoffs = False
         self.pf = 0.0
+        self.ppg = 0.0
         self.pa = 0.0
+        self.pag = 0.0
         self.records = None
         self.year = matchup.year
 
     def add_matchup(self, matchup):
-        self.matchups.append(matchup)
-        self.pf += matchup.pf
-        self.pa += matchup.pa
-        self.ppg = self.pf / len(self.matchups)
-        self.pag = self.pa / len(self.matchups)
+        if not matchup.game.is_consolation:
+            self.matchups.append(matchup)
+            self.games = len(self.matchups)
+            self.pf += matchup.pf
+            self.pa += matchup.pa
+            self.ppg = self.pf / self.games
+            self.pag = self.pa / self.games
+        if matchup.game.is_playoffs:
+            self.playoffs = True
+        if matchup.game.is_championship and matchup.won:
+            self.championship = True
+
+    def playoff_chances(self):
+        # 32 bit Python can only support recursion after week 8
+        # 2^(5*5) = 33.5M
+        # 2^(5*4) = 1.0M
+        # 2^(5*3) = 32.7k
+        # 2^(5*2) = 1024
+        # 2^(5*1) = 32
+        True
+
+
+class Attributes:
+    def __init__(self):
+        self.mu = 0.0
+        self.ssq = 0.0
+        self.sigma = 0.0
+        self.ymu = 0.0
+        self.yssq = 0.0
+        self.ysigma = 0.0
 
 
 class Records:
