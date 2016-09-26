@@ -131,7 +131,6 @@ class Game:
             self.home_score = float(score.split("-")[1])
             self.winner = "Away" if self.away_score > self.home_score else "Home" \
                 if self.away_score < self.home_score else "Tie"
-            True
 
         self.away_matchup = away.add_matchup(self, "Away")
         self.home_matchup = home.add_matchup(self, "Home")

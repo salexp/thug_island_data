@@ -9,7 +9,8 @@ class League:
         self.league_name = name
         self.owners = {}
         self.players = {}
-        self.rankings = rankings.Rankings(self)
+        self.power_rankings = {}
+        self.rankings = []
         self.records = Records(self)
         self.years = {}
 
@@ -29,13 +30,87 @@ class League:
             week.add_details(sheet)
 
     def generate_rankings(self, year=None, week=None):
+        rkngs = rankings.Rankings(self)
         if year is None:
             year = max(self.years.keys())
         if week is None:
             week = self.years[year].current_week
 
         for owner in self.owners:
-            self.rankings.add_owner(self.owners[owner], year, week)
+            rkngs.add_owner(self.owners[owner], year, week)
+
+        hgh = 0.0
+        mx = {}
+        for key in rkngs.keys:
+            wgt = rkngs.keys[key]
+            rkngs.ranks[key] = {"List": None}
+            if key == "QB":
+                lst = [[o, rkngs.owners[o].qb] for o in rkngs.owners]
+            elif key == "RB":
+                lst = [[o, rkngs.owners[o].rb] for o in rkngs.owners]
+            elif key == "WR":
+                lst = [[o, rkngs.owners[o].wr] for o in rkngs.owners]
+            elif key == "TE":
+                lst = [[o, rkngs.owners[o].te] for o in rkngs.owners]
+            elif key == "D/ST":
+                lst = [[o, rkngs.owners[o].dst] for o in rkngs.owners]
+            elif key == "K":
+                lst = [[o, rkngs.owners[o].k] for o in rkngs.owners]
+            elif key == "WP":
+                lst = [[o, rkngs.owners[o].wpct] for o in rkngs.owners]
+            elif key == "PF":
+                lst = [[o, rkngs.owners[o].pf] for o in rkngs.owners]
+            elif key == "PA":
+                lst = [[o, rkngs.owners[o].pa] for o in rkngs.owners]
+            elif key == "PLOB":
+                lst = [[o, rkngs.owners[o].plob] for o in rkngs.owners]
+
+            mx[key] = max([l[1] for l in lst])
+            mx["WP"] = 1.0
+            mx["PLOB"] = min([l[1] for l in lst])
+
+            if key not in ["PLOB"]:
+                mlst = [[i[0], i[1]/mx[key]*wgt] for i in lst]
+            else:
+                mlst = [[i[0], mx[key]/i[1]*wgt] for i in lst]
+
+            slst = sorted(mlst, key=lambda p: p[1], reverse=True)
+            hgh += slst[0][1]
+            rlst = add_ranks(slst, 1)
+            rkngs.ranks[key]["List"] = rlst
+
+            for lne in rlst:
+                nlne = lne[1:]
+                if lne[1] != 0:
+                    cntrb = lne[1]
+                else:
+                    cntrb = 0.0
+                nlne.append(cntrb)
+                rkngs.ranks[key][lne[0]] = nlne
+
+        power_rankings = []
+        rkngs.ranks["PR"] = {}
+        for owner in self.owners:
+            trnk = 0.0
+            for key in rkngs.keys:
+                trnk += rkngs.ranks[key][owner][2]
+
+            trnk = trnk / hgh
+            rkngs.ranks["PR"][owner] = trnk
+            power_rankings.append([owner, trnk])
+
+        self.rankings.append(rkngs)
+        power_rankings = sorted(power_rankings, key=lambda p: p[1], reverse=True)
+        self.power_rankings[week] = add_ranks(power_rankings, 1)
+
+    def recursive_rankings(self, year=None):
+        if year is None:
+            year = max(self.years.keys())
+        self.current_week = self.years[year].current_week
+
+        weeks = [str(w) for w in range(1, int(self.current_week)+1)]
+        for week in weeks:
+            self.generate_rankings(week=week)
 
     def search_players(self, str):
         found = []
@@ -98,8 +173,12 @@ class League:
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pag, reverse=False)
 
-    def to_string(self, owners=True, rcds=10):
+    def to_string(self, owners=False, power=True, rcds=10):
         str = ""
+
+        if power:
+            pass
+
         if owners:
             ownrs = sorted([o for o in self.owners], key=lambda p: (p[0].upper(), p[1]))
             for o in ownrs:

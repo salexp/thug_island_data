@@ -2,15 +2,15 @@ from itertools import groupby
 from operator import itemgetter
 
 
-def add_ranks(list, comp = None):
+def add_ranks(list, compare_index=None):
     rks = range(1, len(list) + 1)
     for line in list:
         ind = list.index(line)
         if ind > 0:
-            if comp is None:
+            if compare_index is None:
                 compare = [sum(list[ind][1]) / list[ind][2], sum(list[ind-1][1]) / list[ind-1][2]]
             else:
-                compare = [list[ind][comp], list[ind-1][comp]]
+                compare = [list[ind][compare_index], list[ind - 1][compare_index]]
             if compare[0] == compare[1]:
                 rks[ind-1] = 'T{}'.format(rks[ind-1].replace('T', ''))
                 rks[ind] = rks[ind-1]

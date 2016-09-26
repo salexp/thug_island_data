@@ -222,6 +222,7 @@ class OwnerSeason:
     def __init__(self, owner, matchup):
         self.championship = False
         self.games = 0
+        self.losses = 0
         self.matchups = []
         self.owner = owner
         self.owner_name = owner.name
@@ -231,12 +232,17 @@ class OwnerSeason:
         self.pa = 0.0
         self.pag = 0.0
         self.records = None
+        self.ties = 0
+        self.wins = 0
         self.year = matchup.year
 
     def add_matchup(self, matchup):
         if not matchup.game.is_consolation:
             self.matchups.append(matchup)
             self.games = len(self.matchups)
+            self.wins += matchup.won
+            self.losses += matchup.lost
+            self.ties += matchup.tie
             self.pf += matchup.pf
             self.pa += matchup.pa
             self.ppg = self.pf / self.games

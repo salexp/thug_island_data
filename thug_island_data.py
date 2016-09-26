@@ -1005,7 +1005,8 @@ def main():
         work_book = xlrd.open_workbook('resources/thug_island_{}.xls'.format(year))
         thug_island.add_games(year, work_book)
 
-    thug_island.generate_rankings()
+    # thug_island.generate_rankings()
+    thug_island.recursive_rankings()
 
     ownr = "Stuart Petty"
     yr = "2015"
