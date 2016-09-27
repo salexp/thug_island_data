@@ -988,7 +988,7 @@ def output_rankings():
 
 
 def main():
-    thug_island = league.League("Thug Island")
+    thug_island = league.League("Thug Island", id="190153")
 
     work_book = xlrd.open_workbook('resources/thug_island_history.xls')
     years = ['2010', '2011', '2012', '2013', '2014', '2015', '2016']
@@ -1000,14 +1000,19 @@ def main():
 
     del thug_island.owners["Cody Blain"]
 
-    years = ['2015', '2016']
-    for year in years:
-        work_book = xlrd.open_workbook('resources/thug_island_{}.xls'.format(year))
-        thug_island.add_games(year, work_book)
+    work_book = xlrd.open_workbook('resources/thug_island_2015.xls')
+    thug_island.add_games("2015", work_book)
+    work_book = xlrd.open_workbook('resources/thug_island_2016.xls')
+    thug_island.add_games("2016", work_book)
 
-    # thug_island.generate_rankings()
     thug_island.recursive_rankings()
 
+    output = thug_island.to_string(games=True, owners=False, power=True, seasons=False, rcds=25)
+    print output
+    with open("ff_data.txt", "w") as f:
+        print >> f, output
+
+    # Debug below
     ownr = "Stuart Petty"
     yr = "2015"
     wk = "3"
@@ -1018,10 +1023,6 @@ def main():
     game = week.games[gm]
     matchup = owner.games[yr][wk]
     roster = matchup.roster
-    output = thug_island.to_string()
-    print output
-    with open("ff_data.txt", "w") as f:
-        print >> f, output
     True
     # team_analysis()
     # draft_history()

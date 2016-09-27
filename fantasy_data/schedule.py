@@ -76,6 +76,7 @@ class Game:
         self.away_roster = []
         self.away_score = None
         self.away_team = None
+        self.away_win = None
         self.detailed = detailed
         self.expended = None
         self.home_matchup = None
@@ -85,6 +86,7 @@ class Game:
         self.home_roster = []
         self.home_score = None
         self.home_team = None
+        self.home_win = None
         self.index = index
         self.league = week.league
         self.played = False
@@ -131,6 +133,8 @@ class Game:
             self.home_score = float(score.split("-")[1])
             self.winner = "Away" if self.away_score > self.home_score else "Home" \
                 if self.away_score < self.home_score else "Tie"
+            self.away_win = self.winner == "Away"
+            self.home_win = self.winner == "Home"
 
         self.away_matchup = away.add_matchup(self, "Away")
         self.home_matchup = home.add_matchup(self, "Home")

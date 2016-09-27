@@ -5,7 +5,8 @@ from util import *
 
 
 class League:
-    def __init__(self, name):
+    def __init__(self, name, id=None):
+        self.current_week = None
         self.league_name = name
         self.owners = {}
         self.players = {}
@@ -13,6 +14,10 @@ class League:
         self.rankings = []
         self.records = Records(self)
         self.years = {}
+
+        if id is not None:
+            self.id = id
+            self.url = "http://games.espn.go.com/ffl/leagueoffice?leagueId=%s" % id
 
     def add_schedule(self, year, sheet):
         if not self.years.get(year):
@@ -106,21 +111,24 @@ class League:
     def recursive_rankings(self, year=None):
         if year is None:
             year = max(self.years.keys())
+
         self.current_week = self.years[year].current_week
 
         weeks = [str(w) for w in range(1, int(self.current_week)+1)]
         for week in weeks:
             self.generate_rankings(week=week)
 
-    def search_players(self, str):
+    def search_players(self, name="   ", position="   "):
         found = []
         for plyr in self.players:
-            if str in self.players[plyr].name:
+            if name in self.players[plyr].name:
+                found.append(self.players[plyr])
+            if position in self.players[plyr].position:
                 found.append(self.players[plyr])
 
         return found
 
-    def update_season_records(self, year, key=None):
+    def update_season_records(self, year, key=None, number=50):
         records = self.records.season
         owner_seasons = self.years[year].owner_seasons
 
@@ -135,7 +143,7 @@ class League:
             for key in keys:
                 if key == "Most PF":
                     rcd = records[key]
-                    if len(rcd) < 10:
+                    if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
                         if rcd[-1].pf < ownr_season.pf:
@@ -145,7 +153,7 @@ class League:
 
                 elif key == "Fewest PF":
                     rcd = records[key]
-                    if len(rcd) < 10:
+                    if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
                         if rcd[-1].pf > ownr_season.pf:
@@ -155,7 +163,7 @@ class League:
 
                 elif key == "Most PA":
                     rcd = records[key]
-                    if len(rcd) < 10:
+                    if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
                         if rcd[-1].pa < ownr_season.pa:
@@ -165,7 +173,7 @@ class League:
 
                 elif key == "Fewest PA":
                     rcd = records[key]
-                    if len(rcd) < 10:
+                    if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
                         if rcd[-1].pa > ownr_season.pa:
@@ -173,7 +181,7 @@ class League:
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pag, reverse=False)
 
-    def to_string(self, owners=False, power=True, rcds=10):
+    def to_string(self, games=True, owners=True, power=True, seasons=True, rcds=10):
         str = ""
 
         if power:
@@ -186,81 +194,140 @@ class League:
                 str += "\n"
 
         if rcds:
-            if rcds > len(self.records.season["Most PF"]):
-                rcds = len(self.records.season["Most PF"])
+            if games:
+                str += "\n"
+                rcd = self.records.teams["Most PF"]
+                str += "[b]Most PF in a Single Game[/b]\n"
+                for r in range(rcds):
+                    mtch = rcd[r]
+                    str += "{0} {1} pts, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
+                                                                                mtch.pf,
+                                                                                mtch.owner_name,
+                                                                                "won" if mtch.won else "lost",
+                                                                                "vs" if mtch.home else "at",
+                                                                                mtch.opponent.name,
+                                                                                mtch.year, mtch.week.number)
 
-            rcd = self.records.season["Most PF"]
-            str += "[b]Most PPG in a Single Season[/b]\n"
-            for r in range(rcds):
-                ows = rcd[r]
-                str += "{0} {1:.1f} {2}{3}{4} ({5})\n".format(add_suffix(r+1),
-                                                              ows.ppg,
-                                                              ows.owner_name,
-                                                              "*" if ows.playoffs else "",
-                                                              "*" if ows.championship else "",
-                                                              ows.year)
+                str += "\n"
+                rcd = self.records.teams["Fewest PF"]
+                str += "[b]Fewest PF in a Single Game[/b]\n"
+                for r in range(rcds):
+                    mtch = rcd[r]
+                    str += "{0} {1} pts, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
+                                                                                mtch.pf,
+                                                                                mtch.owner_name,
+                                                                                "won" if mtch.won else "lost",
+                                                                                "vs" if mtch.home else "at",
+                                                                                mtch.opponent.name,
+                                                                                mtch.year, mtch.week.number)
 
-            str += "\n"
-            rcd = self.records.season["Fewest PF"]
-            str += "[b]Fewest PPG in a Single Season[/b]\n"
-            for r in range(rcds):
-                ows = rcd[r]
-                str += "{0} {1:.1f} {2}{3}{4} ({5})\n".format(add_suffix(r+1),
-                                                              ows.ppg,
-                                                              ows.owner_name,
-                                                              "*" if ows.playoffs else "",
-                                                              "*" if ows.championship else "",
-                                                              ows.year)
+                str += "\n"
+                rcd = self.records.games["Highest Scoring"]
+                str += "[b]Highest Scoring Game[/b]\n"
+                for r in range(rcds):
+                    game = rcd[r]
+                    str += "{0} {1}, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
+                                                                            make_score(game.away_score, game.home_score),
+                                                                            game.home_owner_name if game.winner == "Home"
+                                                                            else game.away_owner_name,
+                                                                            "tied" if game.winner == "Tie" else "won",
+                                                                            "vs" if game.winner == "Home" else "at",
+                                                                            game.away_owner_name if game.winner == "Home"
+                                                                            else game.home_owner_name,
+                                                                            game.year, game.week.number)
 
-            str += "\n"
-            rcd = self.records.season["Most PA"]
-            str += "[b]Most PA/G in a Single Season[/b]\n"
-            for r in range(rcds):
-                ows = rcd[r]
-                str += "{0} {1:.1f} {2}{3}{4} ({5})\n".format(add_suffix(r+1),
-                                                              ows.pag,
-                                                              ows.owner_name,
-                                                              "*" if ows.playoffs else "",
-                                                              "*" if ows.championship else "",
-                                                              ows.year)
+                str += "\n"
+                rcd = self.records.games["Lowest Scoring"]
+                str += "[b]Lowest Scoring Game[/b]\n"
+                for r in range(rcds):
+                    game = rcd[r]
+                    str += "{0} {1}, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
+                                                                            make_score(game.away_score, game.home_score),
+                                                                            game.home_owner_name if game.winner == "Home"
+                                                                            else game.away_owner_name,
+                                                                            "tied" if game.winner == "Tie" else "won",
+                                                                            "vs" if game.winner == "Home" else "at",
+                                                                            game.away_owner_name if game.winner == "Home"
+                                                                            else game.home_owner_name,
+                                                                            game.year, game.week.number)
 
-            str += "\n"
-            rcd = self.records.season["Fewest PA"]
-            str += "[b]Fewest PA/G in a Single Season[/b]\n"
-            for r in range(rcds):
-                ows = rcd[r]
-                str += "{0} {1:.1f} {2}{3}{4} ({5})\n".format(add_suffix(r+1),
-                                                              ows.pag,
-                                                              ows.owner_name,
-                                                              "*" if ows.playoffs else "",
-                                                              "*" if ows.championship else "",
-                                                              ows.year)
+                str += "\n"
+                rcd = self.records.games["Highest Margin"]
+                str += "[b]Largest Margin of Victory[/b]\n"
+                for r in range(rcds):
+                    game = rcd[r]
+                    str += "{0} {1}, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
+                                                                            make_score(game.away_score, game.home_score),
+                                                                            game.home_owner_name if game.winner == "Home"
+                                                                            else game.away_owner_name,
+                                                                            "tied" if game.winner == "Tie" else "won",
+                                                                            "vs" if game.winner == "Home" else "at",
+                                                                            game.away_owner_name if game.winner == "Home"
+                                                                            else game.home_owner_name,
+                                                                            game.year, game.week.number)
 
-            str += "\n"
-            rcd = self.records.teams["Most PF"]
-            str += "[b]Most PF in a Single Game[/b]\n"
-            for r in range(rcds):
-                mtch = rcd[r]
-                str += "{0} {1} pts, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
-                                                                            mtch.pf,
-                                                                            mtch.owner_name,
-                                                                            "won" if mtch.won else "lost",
-                                                                            "vs" if mtch.home else "at",
-                                                                            mtch.opponent.name,
-                                                                            mtch.year, mtch.week.number)
+                str += "\n"
+                rcd = self.records.games["Lowest Margin"]
+                str += "[b]Smallest Margin of Victory[/b]\n"
+                for r in range(rcds):
+                    game = rcd[r]
+                    str += "{0} {1}, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
+                                                                            make_score(game.away_score, game.home_score),
+                                                                            game.home_owner_name if game.winner == "Home"
+                                                                            else game.away_owner_name,
+                                                                            "tied" if game.winner == "Tie" else "won",
+                                                                            "vs" if game.winner == "Home" else "at",
+                                                                            game.away_owner_name if game.winner == "Home"
+                                                                            else game.home_owner_name,
+                                                                            game.year, game.week.number)
 
-            str += "\n"
-            rcd = self.records.teams["Fewest PF"]
-            str += "[b]Fewest PF in a Single Game[/b]\n"
-            for r in range(rcds):
-                mtch = rcd[r]
-                str += "{0} {1} pts, {2} {3} {4} {5} {6} week {7}\n".format(add_suffix(r+1),
-                                                                            mtch.pf,
-                                                                            mtch.owner_name,
-                                                                            "won" if mtch.won else "lost",
-                                                                            "vs" if mtch.home else "at",
-                                                                            mtch.opponent.name,
-                                                                            mtch.year, mtch.week.number)
+            if seasons:
+                rcd = self.records.season["Most PF"]
+                str += "[b]Most PPG in a Single Season[/b]\n"
+                for r in range(rcds):
+                    ows = rcd[r]
+                    str += "{0} {1:.1f} ppg, {2}{3}{4} ({5})\n".format(add_suffix(r+1),
+                                                                       ows.ppg,
+                                                                       ows.owner_name,
+                                                                       "*" if ows.playoffs else "",
+                                                                       "*" if ows.championship else "",
+                                                                       ows.year)
+
+                str += "\n"
+                rcd = self.records.season["Fewest PF"]
+                str += "[b]Fewest PPG in a Single Season[/b]\n"
+                for r in range(rcds):
+                    ows = rcd[r]
+                    str += "{0} {1:.1f} ppg, {2}{3}{4} ({5})\n".format(add_suffix(r+1),
+                                                                       ows.ppg,
+                                                                       ows.owner_name,
+                                                                       "*" if ows.playoffs else "",
+                                                                       "*" if ows.championship else "",
+                                                                       ows.year)
+
+                str += "\n"
+                rcd = self.records.season["Most PA"]
+                str += "[b]Most PA/G in a Single Season[/b]\n"
+                for r in range(rcds):
+                    ows = rcd[r]
+                    str += "{0} {1:.1f} {2}{3}{4} ({5})\n".format(add_suffix(r+1),
+                                                                  ows.pag,
+                                                                  ows.owner_name,
+                                                                  "*" if ows.playoffs else "",
+                                                                  "*" if ows.championship else "",
+                                                                  ows.year)
+
+                str += "\n"
+                rcd = self.records.season["Fewest PA"]
+                str += "[b]Fewest PA/G in a Single Season[/b]\n"
+                for r in range(rcds):
+                    ows = rcd[r]
+                    str += "{0} {1:.1f} {2}{3}{4} ({5})\n".format(add_suffix(r+1),
+                                                                  ows.pag,
+                                                                  ows.owner_name,
+                                                                  "*" if ows.playoffs else "",
+                                                                  "*" if ows.championship else "",
+                                                                  ows.year)
 
         return str
 
@@ -275,11 +342,12 @@ class Year:
 class Records:
     def __init__(self, league):
         self.league = league
-        self.games = {"Highest Scoring": [], "Lowest Scoring": []}
+        self.games = {"Highest Scoring": [], "Lowest Scoring": [], "Highest Margin": [], "Lowest Margin": [],
+                      "Biggest Upset": []}
         self.season = {"Most PF": [], "Fewest PF": [], "Most PA": [], "Fewest PA": []}
         self.teams = {"Most PF": [], "Fewest PF": []}
 
-    def check_records(self, matchup, key=None):
+    def check_records(self, matchup, key=None, number=50):
         if key is not None:
             keys = [key]
         else:
@@ -290,7 +358,7 @@ class Records:
         for key in keys:
             if key == "Most PF":
                 rcd = self.league.records.teams[key]
-                if len(rcd) < 10:
+                if len(rcd) < number:
                     rcd.append(matchup)
                 else:
                     if rcd[-1].pf < matchup.pf:
@@ -301,7 +369,7 @@ class Records:
             elif key == "Fewest PF":
                 if not matchup.game.is_consolation:
                     rcd = self.league.records.teams[key]
-                    if len(rcd) < 10:
+                    if len(rcd) < number:
                         rcd.append(matchup)
                     else:
                         if rcd[-1].pf > matchup.pf:
@@ -312,7 +380,7 @@ class Records:
             elif key == "Highest Scoring":
                 game = matchup.game
                 rcd = self.league.records.games[key]
-                if len(rcd) < 10 and game not in rcd:
+                if len(rcd) < number and game not in rcd:
                     rcd.append(game)
                 elif game not in rcd:
                     if rcd[-1].away_score + rcd[-1].home_score < game.away_score + game.home_score:
@@ -324,11 +392,47 @@ class Records:
                 if not matchup.game.is_consolation:
                     game = matchup.game
                     rcd = self.league.records.games[key]
-                    if len(rcd) < 10 and game not in rcd:
+                    if len(rcd) < number and game not in rcd:
                         rcd.append(game)
                     elif game not in rcd:
                         if rcd[-1].away_score + rcd[-1].home_score > game.away_score + game.home_score:
                             rcd[-1] = game
                     self.league.records.games[key] = \
                         sorted(rcd, key=lambda param: (param.away_score + param.home_score), reverse=False)
+
+            elif key == "Highest Margin":
+                if not matchup.game.is_consolation:
+                    game = matchup.game
+                    rcd = self.league.records.games[key]
+                    if len(rcd) < number and game not in rcd:
+                        rcd.append(game)
+                    elif game not in rcd:
+                        if abs(rcd[-1].away_score - rcd[-1].home_score) < abs(game.away_score - game.home_score):
+                            rcd[-1] = game
+                    self.league.records.games[key] = \
+                        sorted(rcd, key=lambda param: abs(param.away_score - param.home_score), reverse=True)
+
+            elif key == "Lowest Margin":
+                if not matchup.game.is_consolation:
+                    game = matchup.game
+                    rcd = self.league.records.games[key]
+                    if len(rcd) < number and game not in rcd:
+                        rcd.append(game)
+                    elif game not in rcd:
+                        if abs(rcd[-1].away_score - rcd[-1].home_score) > abs(game.away_score - game.home_score):
+                            rcd[-1] = game
+                    self.league.records.games[key] = \
+                        sorted(rcd, key=lambda param: abs(param.away_score - param.home_score), reverse=False)
+
+            elif key == "Biggest Upset":
+                if not matchup.game.is_consolation and matchup.won:
+                    game = matchup.game
+                    rcd = self.league.records.games[key]
+                    if len(rcd) < 5000:
+                        rcd.append(matchup)
+                    else:
+                        if rcd[-1].win_diff > matchup.win_diff:
+                            rcd[-1] = matchup
+                    self.league.records.games[key] = \
+                        sorted(rcd, key=lambda param: param.win_diff, reverse=False)
 

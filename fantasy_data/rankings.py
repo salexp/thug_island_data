@@ -56,7 +56,7 @@ class Metrics:
             matchups += owner.seasons[y].matchups
 
         cw = int(self.league.current_week)
-        matchups = matchups[len(matchups)-cw:len(matchups)-cw+length+1]
+        matchups = matchups[len(matchups)-cw:len(matchups)-cw+length]
         for matchup in matchups:
             qb.append(matchup.roster.qb.points)
             rb.append(matchup.roster.rb1.points)

@@ -143,9 +143,9 @@ class Owner:
             self.team_names.append(name)
             self.team_names = sorted(self.team_names)
 
-    def check_personal(self, matchup):
+    def check_personal(self, matchup, number=50):
         rcd = self.records.personal["Most PF"]
-        if len(rcd) < 10:
+        if len(rcd) < number:
             rcd.append(matchup)
         else:
             if rcd[-1].pf < matchup.pf:
@@ -155,7 +155,7 @@ class Owner:
 
         rcd = self.records.personal["Fewest PF"]
         if not matchup.game.is_consolation:
-            if len(rcd) < 10:
+            if len(rcd) < number:
                 rcd.append(matchup)
             else:
                 if rcd[-1].pf > matchup.pf:
@@ -164,7 +164,7 @@ class Owner:
                 sorted(rcd, key=lambda param: param.pf, reverse=False)
 
         rcd = self.records.personal["Highest Scoring"]
-        if len(rcd) < 10:
+        if len(rcd) < number:
             rcd.append(matchup)
         else:
             if rcd[-1].pf + rcd[-1].pa < matchup.pf + matchup.pa:
@@ -174,7 +174,7 @@ class Owner:
 
         rcd = self.records.personal["Lowest Scoring"]
         if not matchup.game.is_consolation:
-            if len(rcd) < 10:
+            if len(rcd) < number:
                 rcd.append(matchup)
             else:
                 if rcd[-1].pf + rcd[-1].pa > matchup.pf + matchup.pa:
@@ -203,12 +203,22 @@ class Matchup:
         self.team_name = game.away_team if side == "Away" else game.home_team
         self.team_name_opponent = game.home_team if side == "Away" else game.away_team
         self.week = game.week
+        self.win_diff = None
         self.year = game.year
         if side in ["Away", "Home"]:
             away = side == "Away"
             opposite = "Home" if away else "Away"
             self.owner = game.away_owner if away else game.home_owner
             self.opponent = game.home_owner if away else game.away_owner
+
+            diff = get_wins(game.away_record) - get_wins(game.home_record) if away \
+                else get_wins(game.home_record) - get_wins(game.away_record)
+
+            if game.played:
+                diff -= game.away_win if away else game.home_win
+
+            self.win_diff = diff
+
 
             if game.played:
                 self.won = game.winner == side

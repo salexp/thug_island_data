@@ -1,16 +1,17 @@
 from itertools import groupby
+from math import exp
 from operator import itemgetter
 
 
-def add_ranks(list, compare_index=None):
-    rks = range(1, len(list) + 1)
-    for line in list:
-        ind = list.index(line)
+def add_ranks(lst, compare_index=None):
+    rks = range(1, len(lst) + 1)
+    for line in lst:
+        ind = lst.index(line)
         if ind > 0:
             if compare_index is None:
-                compare = [sum(list[ind][1]) / list[ind][2], sum(list[ind-1][1]) / list[ind-1][2]]
+                compare = [sum(lst[ind][1]) / lst[ind][2], sum(lst[ind - 1][1]) / lst[ind - 1][2]]
             else:
-                compare = [list[ind][compare_index], list[ind - 1][compare_index]]
+                compare = [lst[ind][compare_index], lst[ind - 1][compare_index]]
             if compare[0] == compare[1]:
                 rks[ind-1] = 'T{}'.format(rks[ind-1].replace('T', ''))
                 rks[ind] = rks[ind-1]
@@ -20,28 +21,29 @@ def add_ranks(list, compare_index=None):
             rks[ind] = '{}'.format(rks[ind])
 
     for rk in rks:
-        if '1' in rk and '10' not in rk:
-            new = rk + 'st'
-        elif '2' in rk[-1]:
-            new = rk + 'nd'
-        elif '3' in rk[-1]:
-            new = rk + 'rd'
-        elif rk[-1] == '1' and '11' not in rk:
-            new = rk + 'st'
-        else:
-            new = rk + 'th'
+        # if '1' in rk and '10' not in rk:
+        #     new = rk + 'st'
+        # elif '2' in rk[-1]:
+        #     new = rk + 'nd'
+        # elif '3' in rk[-1]:
+        #     new = rk + 'rd'
+        # elif rk[-1] == '1' and '11' not in rk:
+        #     new = rk + 'st'
+        # else:
+        #     new = rk + 'th'
+        new = add_suffix(rk)
         rks[rks.index(rk)] = new
 
-    return [x + [rks[list.index(x)]] for x in list]
+    return [x + [rks[lst.index(x)]] for x in lst]
 
 
 def add_suffix(num):
     num = str(num)
-    if '1' in num and '10' not in num:
+    if '1' in num and num not in ['10', '11', '12', '13', '14', '15', '16', '17', '18', '19']:
         new = num + 'st'
-    elif '2' in num[-1]:
+    elif '2' in num[-1] and num not in ['12']:
         new = num + 'nd'
-    elif '3' in num[-1]:
+    elif '3' in num[-1] and num not in ['13']:
         new = num + 'rd'
     elif num[-1] == '1' and '11' not in num:
         new = num + 'st'
@@ -54,9 +56,9 @@ def add_suffix(num):
     return new
 
 
-def average(list, rnd = 1):
-    if len(list) != 0:
-        avg = round(sum(list) / len(list), rnd)
+def average(lst, rnd=1):
+    if len(lst) != 0:
+        avg = round(sum(lst) / len(lst), rnd)
     else:
         avg = 0
 
@@ -116,7 +118,7 @@ def make_score(pa, pb):
     return "{}-{}".format(pa if pa > pb else pb, pa if pa < pb else pb)
 
 
-def normpdf(x, mu = 1.0, sigma = 1.0):
+def normpdf(x, mu=1.0, sigma=1.0):
     sigma += 0.000001
     var = float(sigma) ** 2
     pi = 3.1415926
@@ -126,13 +128,21 @@ def normpdf(x, mu = 1.0, sigma = 1.0):
     return num / denom
 
 
-def remove_dupes(list):
+def remove_dupes(lst):
     seen = set()
     seen_add = seen.add
-    return [x for x in list if not (x in seen or seen_add(x))]
+    return [x for x in lst if not (x in seen or seen_add(x))]
 
 
-def sumpdf(x, mu = 1.0, sigma = 1.0):
+def stats(lst):
+    mu = sum(lst) / len(lst)
+    ssq = sum([i ** 2 for i in lst])
+    sigma = (1.0 / len(lst)) * (len(lst) * ssq - sum(lst) ** 2) ** 0.5
+
+    return mu, sigma
+
+
+def sumpdf(x, mu=1.0, sigma=1.0):
     sigma += 0.000001
     sum = 0.0
     for i in range(int(x * 100)):
@@ -144,3 +154,7 @@ def sumpdf(x, mu = 1.0, sigma = 1.0):
         sum += (num / denom) * 0.01
 
     return 1 - sum
+
+
+def get_wins(str):
+    return int(str.split('-')[0])
