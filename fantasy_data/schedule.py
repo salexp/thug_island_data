@@ -1,5 +1,6 @@
 from fantasy_data import owner
 from nfl_data import player
+from nfl_data import roster
 
 
 class Schedule:
@@ -20,6 +21,7 @@ class Schedule:
                 self.complete = week.complete
                 if self.complete:
                     self.league.years[year].current_week = week.number
+                    self.league.years[year].current_year = year
 
     def add_week(self, w):
         self.week_list.append(w.number)
@@ -28,6 +30,7 @@ class Schedule:
 
 class Week:
     def __init__(self, schedule, wek, sh, i):
+        self.alltime_roster = None
         self.complete = False
         self.league = schedule.league
         self.schedule = schedule
@@ -65,6 +68,18 @@ class Week:
         for game in self.games:
             if owner_name in [game.away_owner_name, game.home_owner_name]:
                 return game
+
+    def make_roster(self):
+        rstr = roster.GameRoster()
+        for game in self.games:
+            for mtch in [game.away_matchup, game.home_matchup]:
+                for plyr in mtch.roster.starters + mtch.roster.bench:
+                    rstr.add_player(plyr, force="Bench")
+
+        rstr.make_optimal()
+        opt = rstr.optimal
+        opt.update_points()
+        self.alltime_roster = opt
 
 
 class Game:

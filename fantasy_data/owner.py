@@ -262,6 +262,14 @@ class OwnerSeason:
         if matchup.game.is_championship and matchup.won:
             self.championship = True
 
+    def record(self):
+        str = "{0:.0f}-{1:.0f}".format(self.wins, self.losses)
+        if self.ties > 0:
+            str += "-{0:.0f}".format(self.ties)
+
+        return str
+
+
     def playoff_chances(self):
         # 32 bit Python can only support recursion after week 8
         # 2^(5*5) = 33.5M

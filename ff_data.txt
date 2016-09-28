@@ -1,50 +1,26 @@
-[b]Most PPG in a Single Season[/b]
-1st) 115.5 Trevor Watson* (2011)
-2nd) 112.6 josh watson* (2010)
-3rd) 110.5 Eric Price** (2012)
-4th) 110.4 Connor Wiseman** (2011)
-5th) 110.0 Stuart Petty* (2010)
-6th) 109.9 Thomas Singleton* (2010)
-7th) 109.6 Ben Mytelka** (2014)
-8th) 109.5 Ben Mytelka* (2011)
-9th) 108.5 Andrew Lee (2010)
-10th 107.3 Connor Wiseman* (2013)
+[b]Week 4 Computer Rankings[/b]
+1st) (--) [0.8409] James Furlong (2-1)
+2nd) (--) [0.8302] Ben Mytelka (2-1)
+3rd) (--) [0.7724] Andrew Lee (2-1)
+4th) (--) [0.7315] Rande Revilla (2-1)
+5th) (--) [0.7295] Trevor Watson (1-2)
+6th) (--) [0.7248] Eric Price (2-1)
+7th) (--) [0.6631] Connor Wiseman (1-2)
+8th) (--) [0.6472] Stuart Petty (1-2)
+9th) (--) [0.6401] josh watson (2-1)
+10th (--) [0.6112] Thomas Singleton (0-3)
 
-[b]Fewest PPG in a Single Season[/b]
-1st) 79.3 Andrew Lee (2014)
-2nd) 81.5 Connor Wiseman (2010)
-3rd) 83.3 Stuart Petty (2011)
-4th) 83.9 josh watson (2015)
-5th) 84.9 Thomas Singleton (2015)
-6th) 85.0 Rande Revilla (2013)
-7th) 85.0 Rande Revilla (2011)
-8th) 86.2 Andrew Lee* (2012)
-9th) 87.4 James Furlong (2015)
-10th 87.5 Thomas Singleton (2011)
-
-[b]Most PA/G in a Single Season[/b]
-1st) 113.1 Thomas Singleton* (2010)
-2nd) 106.5 Stuart Petty* (2010)
-3rd) 105.0 Connor Wiseman (2010)
-4th) 104.5 Andrew Lee* (2011)
-5th) 104.3 josh watson* (2011)
-6th) 102.4 josh watson* (2010)
-7th) 102.3 Rande Revilla (2011)
-8th) 102.1 Trevor Watson** (2010)
-9th) 101.6 Eric Price* (2011)
-10th 101.1 Connor Wiseman* (2013)
-
-[b]Fewest PA/G in a Single Season[/b]
-1st) 83.1 Stuart Petty** (2013)
-2nd) 84.6 josh watson* (2012)
-3rd) 89.3 Connor Wiseman (2015)
-4th) 90.3 Rande Revilla* (2015)
-5th) 91.2 Eric Price* (2015)
-6th) 91.9 Connor Wiseman* (2012)
-7th) 94.1 Trevor Watson* (2011)
-8th) 94.8 Thomas Singleton (2012)
-9th) 95.2 Eric Price (2013)
-10th 95.5 Thomas Singleton (2011)
+[b]Team of the Week (Week 3)[/b]
+QB. Matthew Stafford (James Furlong, started) - 28.0
+RB1. Devonta Freeman (Connor Wiseman, started) - 27.2
+RB2. Tevin Coleman (Eric Price, started) - 26.9
+WR1. Marvin Jones (James Furlong, started) - 36.0
+WR2. T.Y. Hilton (Trevor Watson, started) - 25.9
+FLX. Emmanuel Sanders (Eric Price, started) - 25.2
+TE. Coby Fleener (Trevor Watson, started) - 17.9
+DST. Chiefs (Ben Mytelka, started) - 32.0
+K. Justin Tucker (Ben Mytelka, started) - 17.0
+Total Score: 236.1
 
 [b]Most PF in a Single Game[/b]
 1st) 188.5 pts, Rande Revilla won vs Ben Mytelka 2014 week 8
@@ -57,6 +33,21 @@
 8th) 154.0 pts, Trevor Watson won at Cody Blain 2013 week 4
 9th) 153.0 pts, Stuart Petty won at josh watson 2010 week 14
 10th 151.0 pts, josh watson won vs Ben Mytelka 2010 week 11
+11th 151.0 pts, Thomas Singleton won vs James Furlong 2011 week 14
+12th 150.8 pts, Eric Price won at Trevor Watson 2013 week 2
+13th 150.0 pts, Trevor Watson won vs Ben Mytelka 2011 week 1
+14th 150.0 pts, Eric Price won vs Andrew Lee 2011 week 14
+15th 149.2 pts, Stuart Petty won vs Rande Revilla 2013 week 4
+16th 149.1 pts, James Furlong won vs Rande Revilla 2016 week 1
+17th 149.0 pts, Connor Wiseman won vs James Furlong 2014 week 10
+18th 148.3 pts, Cody Blain won vs Eric Price 2013 week 15
+19th 148.1 pts, Ben Mytelka won vs James Furlong 2013 week 14
+20th 148.0 pts, Thomas Singleton won vs Stuart Petty 2012 week 14
+21st 147.6 pts, Ben Mytelka won vs Stuart Petty 2016 week 3
+22nd 147.0 pts, Ben Mytelka won at Andrew Lee 2010 week 13
+23rd 146.9 pts, Ben Mytelka won vs Thomas Singleton 2015 week 13
+24th 146.5 pts, Connor Wiseman won vs josh watson 2013 week 9
+25th 146.5 pts, Trevor Watson won vs Eric Price 2014 week 12
 
 [b]Fewest PF in a Single Game[/b]
 1st) 37.4 pts, Eric Price lost vs Rande Revilla 2013 week 13
@@ -69,4 +60,127 @@
 8th) 50.1 pts, Thomas Singleton lost vs Eric Price 2015 week 11
 9th) 50.4 pts, Rande Revilla won at Eric Price 2013 week 13
 10th 50.4 pts, Connor Wiseman lost vs James Furlong 2015 week 10
+11th 52.1 pts, Thomas Singleton lost vs Ben Mytelka 2014 week 1
+12th 52.9 pts, James Furlong won at Connor Wiseman 2015 week 10
+13th 53.5 pts, Eric Price lost vs Andrew Lee 2014 week 3
+14th 53.7 pts, Ben Mytelka lost vs Rande Revilla 2013 week 3
+15th 54.0 pts, Rande Revilla lost at Connor Wiseman 2012 week 7
+16th 54.0 pts, josh watson lost at James Furlong 2015 week 11
+17th 54.3 pts, Thomas Singleton lost at Ben Mytelka 2014 week 13
+18th 55.0 pts, Connor Wiseman lost vs Andrew Lee 2010 week 1
+19th 55.5 pts, Connor Wiseman lost vs Stuart Petty 2013 week 3
+20th 56.0 pts, Thomas Singleton lost vs Connor Wiseman 2011 week 6
+21st 56.0 pts, James Furlong lost vs Stuart Petty 2011 week 11
+22nd 57.0 pts, josh watson lost at Rande Revilla 2012 week 8
+23rd 57.0 pts, Andrew Lee lost vs Ben Mytelka 2013 week 10
+24th 57.8 pts, James Furlong lost vs Rande Revilla 2015 week 1
+25th 57.9 pts, josh watson lost at Connor Wiseman 2015 week 9
+
+[b]Highest Scoring Game[/b]
+1st) 148.0-146.0, Thomas Singleton won vs Stuart Petty 2012 week 14
+2nd) 188.5-95.6, Rande Revilla won vs Ben Mytelka 2014 week 8
+3rd) 144.2-132.3, Eric Price won vs Andrew Lee 2016 week 3
+4th) 150.8-124.8, Eric Price won at Trevor Watson 2013 week 2
+5th) 180.5-92.2, Ben Mytelka won at Trevor Watson 2015 week 9
+6th) 146.0-126.0, Thomas Singleton won at Andrew Lee 2010 week 4
+7th) 149.1-122.3, James Furlong won vs Rande Revilla 2016 week 1
+8th) 139.2-130.8, James Furlong won at Connor Wiseman 2013 week 10
+9th) 135.1-131.8, josh watson won vs Connor Wiseman 2014 week 13
+10th 148.1-118.5, Ben Mytelka won vs James Furlong 2013 week 14
+11th 150.0-116.0, Eric Price won vs Andrew Lee 2011 week 14
+12th 141.9-121.9, Trevor Watson won at James Furlong 2016 week 3
+13th 144.0-117.0, Andrew Lee won at josh watson 2010 week 9
+14th 160.4-100.1, Ben Mytelka won vs James Furlong 2015 week 2
+15th 149.2-110.0, Stuart Petty won vs Rande Revilla 2013 week 4
+16th 136.0-123.0, Trevor Watson won vs Thomas Singleton 2010 week 3
+17th 135.0-124.0, James Furlong won vs josh watson 2011 week 4
+18th 151.0-108.0, Thomas Singleton won vs James Furlong 2011 week 14
+19th 171.2-86.9, Stuart Petty won vs Andrew Lee 2014 week 13
+20th 139.0-119.0, Connor Wiseman won vs Eric Price 2012 week 2
+21st 135.0-122.0, Trevor Watson won vs Thomas Singleton 2010 week 14
+22nd 133.0-124.0, Rande Revilla won at Trevor Watson 2011 week 2
+23rd 138.3-118.6, Ben Mytelka won at Eric Price 2014 week 10
+24th 128.0-127.0, Ben Mytelka won vs Eric Price 2012 week 5
+25th 127.1-126.5, Stuart Petty won at Ben Mytelka 2015 week 3
+
+[b]Lowest Scoring Game[/b]
+1st) 50.4-37.4, Rande Revilla won at Eric Price 2013 week 13
+2nd) 52.9-50.4, James Furlong won at Connor Wiseman 2015 week 10
+3rd) 66.8-50.1, Eric Price won at Thomas Singleton 2015 week 11
+4th) 69.9-49.2, Stuart Petty won vs Trevor Watson 2015 week 2
+5th) 64.0-57.0, Rande Revilla won vs josh watson 2012 week 8
+6th) 69.2-57.0, Ben Mytelka won at Andrew Lee 2013 week 10
+7th) 76.8-53.5, Andrew Lee won at Eric Price 2014 week 3
+8th) 76.3-54.0, James Furlong won vs josh watson 2015 week 11
+9th) 67.0-64.0, Andrew Lee won vs Stuart Petty 2011 week 9
+10th 71.9-60.9, Rande Revilla won vs James Furlong 2013 week 6
+11th 69.0-65.0, Trevor Watson won at Ben Mytelka 2010 week 8
+12th 80.7-53.7, Rande Revilla won at Ben Mytelka 2013 week 3
+13th 70.3-65.2, Andrew Lee won at Stuart Petty 2013 week 5
+14th 76.0-60.0, Andrew Lee won vs josh watson 2012 week 11
+15th 69.5-68.9, Stuart Petty won vs Connor Wiseman 2013 week 12
+16th 100.7-38.4, josh watson won vs Andrew Lee 2014 week 5
+17th 81.0-59.0, Trevor Watson won vs Andrew Lee 2010 week 12
+18th 73.6-66.8, Ben Mytelka won vs Cody Blain 2013 week 9
+19th 74.0-68.0, Trevor Watson won at Thomas Singleton 2011 week 13
+20th 79.0-64.0, Ben Mytelka won vs Thomas Singleton 2012 week 2
+21st 95.8-47.4, Stuart Petty won vs Andrew Lee 2014 week 7
+22nd 74.4-69.3, Trevor Watson won at Ben Mytelka 2013 week 13
+23rd 89.0-56.0, Connor Wiseman won at Thomas Singleton 2011 week 6
+24th 96.9-48.3, Trevor Watson won at josh watson 2015 week 4
+25th 83.3-63.6, Stuart Petty won vs James Furlong 2013 week 2
+
+[b]Largest Margin of Victory[/b]
+1st) 188.5-95.6, Rande Revilla won vs Ben Mytelka 2014 week 8
+2nd) 151.0-62.0, josh watson won vs Ben Mytelka 2010 week 11
+3rd) 180.5-92.2, Ben Mytelka won at Trevor Watson 2015 week 9
+4th) 171.2-86.9, Stuart Petty won vs Andrew Lee 2014 week 13
+5th) 154.0-70.0, Trevor Watson won at Cody Blain 2013 week 4
+6th) 161.5-79.6, Eric Price won at James Furlong 2013 week 9
+7th) 147.6-70.7, Ben Mytelka won vs Stuart Petty 2016 week 3
+8th) 157.0-86.0, josh watson won at Stuart Petty 2010 week 1
+9th) 143.0-72.0, Andrew Lee won at Trevor Watson 2010 week 5
+10th 132.0-61.0, Connor Wiseman won vs Stuart Petty 2011 week 3
+11th 124.2-54.3, Ben Mytelka won vs Thomas Singleton 2014 week 13
+12th 154.0-85.0, Thomas Singleton won at James Furlong 2012 week 9
+13th 130.4-62.0, Rande Revilla won at josh watson 2015 week 3
+14th 138.5-70.3, Trevor Watson won vs Andrew Lee 2013 week 8
+15th 126.0-58.0, Ben Mytelka won vs Stuart Petty 2010 week 5
+16th 146.9-81.0, Ben Mytelka won vs Thomas Singleton 2015 week 13
+17th 130.9-65.5, Stuart Petty won vs Rande Revilla 2015 week 5
+18th 120.0-55.0, Andrew Lee won at Connor Wiseman 2010 week 1
+19th 140.1-75.8, Rande Revilla won vs Eric Price 2014 week 4
+20th 127.7-63.9, Trevor Watson won at josh watson 2014 week 4
+21st 124.0-61.0, Eric Price won vs Ben Mytelka 2010 week 10
+22nd 153.0-90.0, Stuart Petty won at josh watson 2010 week 14
+23rd 114.7-52.1, Ben Mytelka won at Thomas Singleton 2014 week 1
+24th 100.7-38.4, josh watson won vs Andrew Lee 2014 week 5
+25th 125.0-63.0, Andrew Lee won vs josh watson 2011 week 11
+
+[b]Smallest Margin of Victory[/b]
+1st) 125.0-125.0, Eric Price tied at Stuart Petty 2010 week 13
+2nd) 112.2-111.8, Trevor Watson won at James Furlong 2013 week 7
+3rd) 75.9-75.5, Andrew Lee won vs Stuart Petty 2013 week 9
+4th) 110.7-110.2, Andrew Lee won at James Furlong 2014 week 4
+5th) 69.5-68.9, Stuart Petty won vs Connor Wiseman 2013 week 12
+6th) 127.1-126.5, Stuart Petty won at Ben Mytelka 2015 week 3
+7th) 85.7-85.1, josh watson won at Thomas Singleton 2014 week 7
+8th) 87.3-86.6, Stuart Petty won at Ben Mytelka 2014 week 3
+9th) 104.4-103.6, Trevor Watson won vs Ben Mytelka 2015 week 5
+10th 83.0-82.0, Eric Price won vs josh watson 2011 week 6
+11th 128.0-127.0, Ben Mytelka won vs Eric Price 2012 week 5
+12th 91.3-90.0, Andrew Lee won vs Connor Wiseman 2016 week 1
+13th 102.4-101.1, Rande Revilla won at Thomas Singleton 2014 week 12
+14th 111.4-110.0, James Furlong won at Andrew Lee 2013 week 3
+15th 91.3-89.8, Stuart Petty won vs Connor Wiseman 2013 week 16
+16th 83.0-81.0, Thomas Singleton won vs Connor Wiseman 2010 week 5
+17th 77.0-75.0, Connor Wiseman won vs James Furlong 2011 week 10
+18th 124.0-122.0, Connor Wiseman won vs Trevor Watson 2011 week 16
+19th 88.0-86.0, Connor Wiseman won at James Furlong 2012 week 1
+20th 98.0-96.0, Trevor Watson won vs Rande Revilla 2012 week 2
+21st 94.2-91.7, Trevor Watson won vs Ben Mytelka 2013 week 5
+22nd 92.0-89.5, Connor Wiseman won vs Andrew Lee 2013 week 13
+23rd 92.1-89.6, James Furlong won vs Trevor Watson 2014 week 3
+24th 52.9-50.4, James Furlong won at Connor Wiseman 2015 week 10
+25th 84.7-81.9, Ben Mytelka won at Connor Wiseman 2015 week 4
 

@@ -30,6 +30,7 @@ class PlayerGame:
     def __init__(self, player, matchup, info, slot):
         self.matchup = matchup
         self.name = player.name
+        self.owner = matchup.owner
         self.player = player
         self.slot = slot
 

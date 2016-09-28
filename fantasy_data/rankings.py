@@ -3,6 +3,7 @@ class Rankings:
         self.owners = {}
         self.keys = None
         self.ranks = {}
+        self.roster = None
         self.week = None
         self.year = None
 
@@ -23,7 +24,7 @@ class Metrics:
                      "TE":   1.1,
                      "D/ST": 1.1,
                      "K":    1.0,
-                     "WP":   2.0,
+                     "WP":   1.5,
                      "PF":   1.5,
                      "PA":   0.7,
                      "PLOB": 1.0}

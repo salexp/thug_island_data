@@ -7,6 +7,7 @@ from util import *
 class League:
     def __init__(self, name, id=None):
         self.current_week = None
+        self.current_year = None
         self.league_name = name
         self.owners = {}
         self.players = {}
@@ -40,6 +41,9 @@ class League:
             year = max(self.years.keys())
         if week is None:
             week = self.years[year].current_week
+
+        rstr = self.years[year].schedule.weeks[week].make_roster()
+        rkngs.roster = rstr
 
         for owner in self.owners:
             rkngs.add_owner(self.owners[owner], year, week)
@@ -113,6 +117,7 @@ class League:
             year = max(self.years.keys())
 
         self.current_week = self.years[year].current_week
+        self.current_year = year
 
         weeks = [str(w) for w in range(1, int(self.current_week)+1)]
         for week in weeks:
@@ -185,9 +190,33 @@ class League:
         str = ""
 
         if power:
-            pass
+            week = self.current_week
+            year = self.current_year
+            rnks = self.power_rankings[week]
+            str += "[b]Week {} Computer Rankings[/b]\n".format(int(week)+1)
+            for rnk in rnks:
+                owner = self.owners[rnk[0]]
+                str += "{0} ({1}) [{2:.4f}] {3} ({4})\n".format(rnk[2],
+                                                                "--",
+                                                                rnk[1],
+                                                                owner.name,
+                                                                owner.seasons[self.current_year].record())
+
+            str += "\n"
+            rstr = self.years[year].schedule.weeks[week].alltime_roster
+            str += "[b]Team of the Week (Week {})[/b]\n".format(week)
+            pos = ["QB", "RB1", "RB2", "WR1", "WR2", "FLX", "TE", "DST", "K"]
+            for p, plyr in enumerate([rstr.qb, rstr.rb1, rstr.rb2, rstr.wr1, rstr.wr2, rstr.flx, rstr.te, rstr.dst, rstr.k]):
+                str += "{0}. {1} ({2}, {3}) - {4}\n".format(pos[p],
+                                                            plyr.name,
+                                                            plyr.owner.name,
+                                                            "benched" if plyr.slot == "Bench" else "started",
+                                                            plyr.points)
+            str += "Total Score: {}\n".format(rstr.starter_points)
+
 
         if owners:
+            str += "\n"
             ownrs = sorted([o for o in self.owners], key=lambda p: (p[0].upper(), p[1]))
             for o in ownrs:
                 str += self.owners[o].records.to_string()
@@ -334,7 +363,8 @@ class League:
 
 class Year:
     def __init__(self):
-        self.current_week = 0
+        self.current_week = None
+        self.current_year = None
         self.owner_seasons = {}
         self.schedule = None
 
