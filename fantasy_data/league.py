@@ -8,6 +8,7 @@ class League:
     def __init__(self, name, id=None):
         self.current_week = None
         self.current_year = None
+        self.historic_playoffs = None
         self.league_name = name
         self.owners = {}
         self.players = {}
@@ -27,6 +28,9 @@ class League:
         self.years[year].schedule = sch
         if sch.complete:
             self.update_season_records(year)
+        else:
+            self.current_year = year
+            self.current_week = sch.current_week
 
     def add_games(self, year, book):
         for w in range(1, len(self.years[year].schedule.weeks) + 1):
@@ -112,6 +116,26 @@ class League:
         power_rankings = sorted(power_rankings, key=lambda p: p[1], reverse=True)
         self.power_rankings[week] = add_ranks(power_rankings, 1)
 
+    def make_historic_playoffs(self):
+        nxt = True
+        most_wins = int(self.current_week) + nxt
+        playoffs = {}
+        records = ["{}-{}".format(most_wins-i, i) for i in range(most_wins+1)]
+        for r in records:
+            playoffs[r] = [0, 0.0]
+
+        seasons = []
+        for y in self.years:
+            owner_seasons = self.years[y].owner_seasons
+            for s in owner_seasons:
+                ows = owner_seasons[s]
+                for rcd in records:
+                    if rcd in ows.wl_records:
+                        playoffs[rcd][0] += ows.playoffs
+                        playoffs[rcd][1] += 1
+
+        self.historic_playoffs = playoffs
+
     def recursive_rankings(self, year=None):
         if year is None:
             year = max(self.years.keys())
@@ -122,6 +146,8 @@ class League:
         weeks = [str(w) for w in range(1, int(self.current_week)+1)]
         for week in weeks:
             self.generate_rankings(week=week)
+
+        self.make_historic_playoffs()
 
     def search_players(self, name="   ", position="   "):
         found = []
@@ -186,7 +212,7 @@ class League:
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pag, reverse=False)
 
-    def to_string(self, games=True, owners=True, power=True, seasons=True, rcds=10):
+    def to_string(self, games=True, mtchups=False, owners=True, plyffs=True, power=True, seasons=True, rcds=10):
         str = ""
 
         if power:
@@ -214,13 +240,28 @@ class League:
                                                             plyr.points)
             str += "Total Score: {}\n".format(rstr.starter_points)
 
-
         if owners:
             str += "\n"
             ownrs = sorted([o for o in self.owners], key=lambda p: (p[0].upper(), p[1]))
             for o in ownrs:
                 str += self.owners[o].records.to_string()
                 str += "\n"
+
+        if mtchups:
+            pass
+
+        if plyffs:
+            str += "\n"
+            plys = self.historic_playoffs
+            str += "[b]Historic Playoff Chances[/b]\n"
+            for r in sorted(plys.keys(), reverse=True):
+                rcd = plys[r]
+                str += "{0}: {1}{2}{3} team{4} gone {5}\n".format(r,
+                                                                  "{:.1%}".format(rcd[0] / rcd[1]) if rcd[1] else "No",
+                                                                  ", " if rcd[1] else "",
+                                                                  "{:.0f}".format(rcd[1]) if rcd[1] else "",
+                                                                  "s have" if rcd[1] != 1 else " has",
+                                                                  r)
 
         if rcds:
             if games:

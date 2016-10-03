@@ -195,27 +195,28 @@ class Owner:
 
 class Matchup:
     def __init__(self, game, side):
-        self.away = side == "Away"
+        _away = side == "Away"
+        self.away = _away
         self.game = game
-        self.home = side == "Home"
-        self.owner_name = game.away_owner_name if side == "Away" else game.home_owner_name
+        self.home = not _away
+        self.owner_name = game.away_owner_name if _away else game.home_owner_name
+        self.record = game.away_record if _away else game.home_record
         self.roster = roster.GameRoster()
-        self.team_name = game.away_team if side == "Away" else game.home_team
-        self.team_name_opponent = game.home_team if side == "Away" else game.away_team
+        self.team_name = game.away_team if _away else game.home_team
+        self.team_name_opponent = game.home_team if _away else game.away_team
         self.week = game.week
         self.win_diff = None
         self.year = game.year
         if side in ["Away", "Home"]:
-            away = side == "Away"
-            opposite = "Home" if away else "Away"
-            self.owner = game.away_owner if away else game.home_owner
-            self.opponent = game.home_owner if away else game.away_owner
+            opposite = "Home" if _away else "Away"
+            self.owner = game.away_owner if _away else game.home_owner
+            self.opponent = game.home_owner if _away else game.away_owner
 
-            diff = get_wins(game.away_record) - get_wins(game.home_record) if away \
+            diff = get_wins(game.away_record) - get_wins(game.home_record) if _away \
                 else get_wins(game.home_record) - get_wins(game.away_record)
 
             if game.played:
-                diff -= game.away_win if away else game.home_win
+                diff -= game.away_win if _away else game.home_win
 
             self.win_diff = diff
 
@@ -224,8 +225,8 @@ class Matchup:
                 self.won = game.winner == side
                 self.lost = game.winner == opposite
                 self.tie = game.winner == "Tie"
-                self.pf = game.away_score if away else game.home_score
-                self.pa = game.home_score if away else game.away_score
+                self.pf = game.away_score if _away else game.home_score
+                self.pa = game.home_score if _away else game.away_score
 
 
 class OwnerSeason:
@@ -244,9 +245,11 @@ class OwnerSeason:
         self.records = None
         self.ties = 0
         self.wins = 0
+        self.wl_records = []
         self.year = matchup.year
 
     def add_matchup(self, matchup):
+        self.wl_records.append(matchup.record)
         if not matchup.game.is_consolation:
             self.matchups.append(matchup)
             self.games = len(self.matchups)
@@ -268,7 +271,6 @@ class OwnerSeason:
             str += "-{0:.0f}".format(self.ties)
 
         return str
-
 
     def playoff_chances(self):
         # 32 bit Python can only support recursion after week 8

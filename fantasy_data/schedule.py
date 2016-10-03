@@ -49,6 +49,7 @@ class Week:
                 self.games.append(game)
                 if game.played:
                     self.complete = True
+                    schedule.current_week = wek
             i += 1
             if i == sh.nrows:
                 break
