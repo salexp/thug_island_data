@@ -118,6 +118,21 @@ def make_score(pa, pb):
     return "{}-{}".format(pa if pa > pb else pb, pa if pa < pb else pb)
 
 
+def make_list_games(dict, consolation=False):
+    lst = []
+    for year in sorted(dict.keys()):
+        weeks = dict[year].keys()
+        weeks = sorted([int(w) for w in weeks])
+        for wk in weeks:
+            mtch = dict[year][str(wk)]
+            if mtch.game.is_consolation and not consolation:
+                pass
+            elif mtch.game.played:
+                lst.append(mtch)
+
+    return lst
+
+
 def normpdf(x, mu=1.0, sigma=1.0):
     sigma += 0.000001
     var = float(sigma) ** 2

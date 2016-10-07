@@ -30,6 +30,7 @@ class Metrics:
                      "PLOB": 1.0}
         self.league = owner.league
         self.owner = owner
+        self.power_rank = None
         self.week = rankings.week
         self.year = rankings.year
 

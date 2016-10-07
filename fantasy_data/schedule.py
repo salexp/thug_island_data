@@ -1,6 +1,7 @@
 from fantasy_data import owner
 from nfl_data import player
 from nfl_data import roster
+from util import *
 
 
 class Schedule:
@@ -106,6 +107,7 @@ class Game:
         self.index = index
         self.league = week.league
         self.played = False
+        self.preview = None
         self.raw_details = None
         self.raw_summary = None
         self.schedule = week.schedule
@@ -201,6 +203,10 @@ class Game:
 
             owner.check_roster(mtup)
 
+    def create_preview(self):
+        preview = GamePreview(self)
+        True
+
 
 def is_regular_season(year, week, game):
     year = int(year)
@@ -240,3 +246,103 @@ def is_championship(year, week, game):
 
     return (year == 2010 and week == 15 and game == 1) \
            or (year-2000 in [11, 12, 13, 14, 15, 16] and week == 16 and game == 1)
+
+
+class GamePreview:
+    def __init__(self, game):
+        self.away_favorite = False
+        self.away_spread = 0.0
+        self.favorite = None
+        self.home_favorite = False
+        self.home_spread = 0.0
+        self.ou = 0.0
+        self.spread = 0.0
+
+        away_owner = game.away_owner
+        away_owner.attrib.update()
+        home_owner = game.home_owner
+        home_owner.attrib.update()
+
+        mu_a = away_owner.attrib.mu
+        sigma_a = away_owner.attrib.sigma
+        mu_h = home_owner.attrib.mu
+        sigma_h = home_owner.attrib.sigma
+
+        point_range = range(int(min([mu_a, mu_h]) - max([sigma_a, sigma_h])) * 100,
+                            int(max([mu_a, mu_h]) + max([sigma_a, sigma_h])) * 100)
+
+        diff = 99999.9
+        intercept = None
+        for hpts in point_range:
+            pts = hpts / 100.0
+            diff_temp = float(abs(normpdf(pts, mu_a, sigma_a) - normpdf(pts, mu_h, sigma_h)))
+            if diff_temp < diff:
+                diff = diff_temp
+                intercept = hpts
+
+        points = intercept / 100.0
+        self.ou = 2 * points
+        sum_a = sumpdf(points, mu_a, sigma_a)
+        sum_h = sumpdf(points, mu_h, sigma_h)
+
+        away_opp = away_owner.records.opponents[home_owner.name]["All"]
+        away_year = away_owner.records.overall[game.year]
+        home_opp = home_owner.records.opponents[away_owner.name]["All"]
+        home_year = home_owner.records.overall[game.year]
+        pct_a = 0.9 * sum_a / (sum_a + sum_h) + 0.1 * away_opp.percent()
+        pct_h = 0.9 * sum_h / (sum_a + sum_h) + 0.1 * home_opp.percent()
+
+        adjm = 1.0
+        spreads = [None, None]
+        odds = [None, None]
+        money_lines = [None, None]
+        for i, pct in enumerate([pct_a, pct_h]):
+            ownr_opp = home_opp if i else away_opp
+            ownr_year = home_year if i else away_year
+            if pct > 0.5:
+                mline = pct / (1.0 - pct) * (-100.0)
+            else:
+                mline = (1.0 - pct) / pct * 100
+            mline = int(mline / abs(mline)) * ((abs(mline) - 100) / adjm + 100)
+            mline = int(round(mline * 2, -1) / 2) if mline != 100 else "PUSH"
+            money_lines[i] = mline
+            spread = int((0.65 * (ownr_opp.pf - ownr_opp.pa) + 0.35 *
+                          (ownr_year.pf - ownr_year.pa)) * 20) / 20.0
+            spreads[i] = abs(spread) * (-1 if mline < 0 else 1)
+            spreads[i] = str(spreads[i]).rjust(len(str(abs(spreads[i]))) + 1, '+')
+            if not i:
+                m_x = mu_a
+                s_x = sigma_a
+                m_y = mu_h
+                s_y = sigma_h
+            if i:
+                m_x = mu_h
+                s_x = sigma_h
+                m_y = mu_a
+                s_y = sigma_a
+            odd = sumpdf(m_y + s_y ** (1.0 + (abs(s_x - s_y) / max(s_x, s_y))), m_x, s_x)
+            odds[i] = odd
+
+        ava = 0.5 - sum(odds) / len(odds)
+        odds[0] += ava
+        odds[1] += ava
+        new_odds = [None, None]
+        for i, odd in enumerate(odds):
+            if odd > 0.5:
+                line = odd / (1.0 - odd) * (-100.0)
+            else:
+                line = (1.0 - odd) / odd * 100
+            line = abs(int(round(line * 2, -1) / 2))
+            if abs(line) < 104:
+                line = 'PUSH'
+            new_odds[i] = line * abs(money_lines[i]) / money_lines[i]
+            if new_odds[i] not in ['PUSH', 'OFF'] and money_lines[i] not in ['PUSH', 'OFF']:
+                if abs(new_odds[i]) > abs(money_lines[i]):
+                    new_odds[i] = 'OFF'
+
+        self.away_favorite = False
+        self.away_spread = 0.0
+        self.favorite = None
+        self.home_favorite = False
+        self.home_spread = 0.0
+        self.spread = -abs(spread)

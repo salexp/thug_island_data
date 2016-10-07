@@ -18,7 +18,7 @@ divisions = {
 
 class Owner:
     def __init__(self, name, league):
-        self._attrb = Attributes()
+        self.attrib = Attributes(self)
         self.active = []
         self.championships = []
         self.championship_games = []
@@ -283,13 +283,23 @@ class OwnerSeason:
 
 
 class Attributes:
-    def __init__(self):
+    def __init__(self, owner):
+        self.owner = owner
         self.mu = 0.0
         self.ssq = 0.0
         self.sigma = 0.0
-        self.ymu = 0.0
-        self.yssq = 0.0
-        self.ysigma = 0.0
+
+    def update(self, n_games=10, weighted=True):
+        matchups = make_list_games(self.owner.games)[-n_games:]
+        if weighted:
+            points = [[m.pf] * (i+1) for i, m in enumerate(matchups)]
+            points = [p for sublist in points for p in sublist]
+        else:
+            points = [m.pf for m in matchups]
+
+        self.mu = sum(points) / len(points)
+        self.ssq = sum(p**2 for p in points)
+        self.sigma = (1.0 / len(points)) * (len(points) * self.ssq - sum(points) ** 2) ** (0.5)
 
 
 class Records:
@@ -370,6 +380,9 @@ class Record:
         self.ties = 0
         self.pf = 0.0
         self.pa = 0.0
+
+    def percent(self):
+        return (self.wins + 0.5 * self.ties) / float(self.all)
 
     def to_string(self, wlt=True, pfpa=True):
         str = ""
