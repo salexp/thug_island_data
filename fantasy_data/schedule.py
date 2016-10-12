@@ -31,14 +31,13 @@ class Schedule:
 
 class Week:
     def __init__(self, schedule, wek, sh, i):
-        self.alltime_roster = None
         self.complete = False
         self.league = schedule.league
-        self.records = Records(self)
         self.schedule = schedule
         self.number = wek
         self.year = schedule.year
 
+        self.records = Records(self)
         self.games = []
 
         idx = 0
@@ -56,6 +55,8 @@ class Week:
             if i == sh.nrows:
                 break
 
+        self.records.update()
+
     def add_details(self, sh):
         for c in range(sh.ncols):
             if sh.cell_value(1, c) in self.league.owners:
@@ -72,9 +73,24 @@ class Week:
             if owner_name in [game.away_owner_name, game.home_owner_name]:
                 return game
 
+    def is_postseason(self):
+        return is_postseason(self.year, self.number)
+
+    def is_regular_season(self):
+        return is_regular_season(self.year, self.number)
+
+
+class Records:
+    def __init__(self, week):
+        self.alltime_roster = None
+        self.finish = {"Games": []}
+        self.league = week.league
+        self.week = week
+        self.year = week.year
+
     def make_roster(self):
         rstr = roster.GameRoster()
-        for game in self.games:
+        for game in self.week.games:
             for mtch in [game.away_matchup, game.home_matchup]:
                 for plyr in mtch.roster.starters + mtch.roster.bench:
                     rstr.add_player(plyr, force="Bench")
@@ -83,6 +99,20 @@ class Week:
         opt = rstr.optimal
         opt.update_points()
         self.alltime_roster = opt
+
+    def update(self):
+        if self.week.complete and self.week.is_regular_season():
+            rcd = self.finish
+            matchups = [g.home_matchup for g in self.week.games]
+            matchups += [g.away_matchup for g in self.week.games]
+            matchups = sorted(matchups, key=lambda p: p.pf, reverse=True)
+            rcd["Games"] = matchups
+            for i, mtch in enumerate(matchups):
+                rcd[mtch.owner.name] = i + 1
+                mtch.owner.records.points_finish["All"].append(i + 1)
+                if not mtch.owner.records.points_finish.get(self.year):
+                    mtch.owner.records.points_finish[self.year] = []
+                mtch.owner.records.points_finish[self.year].append(i + 1)
 
 
 class Game:
@@ -116,8 +146,8 @@ class Game:
         self.week = week
         self.winner = None
         self.year = week.year
-        self.is_regular_season = is_regular_season(self.year, self.week.number, self.index)
-        self.is_postseason = is_postseason(self.year, self.week.number, self.index)
+        self.is_regular_season = is_regular_season(self.year, self.week.number)
+        self.is_postseason = is_postseason(self.year, self.week.number)
         self.is_consolation = is_consolation(self.year, self.week.number, self.index)
         self.is_playoffs = is_playoffs(self.year, self.week.number, self.index)
         self.is_championship = is_championship(self.year, self.week.number, self.index)
@@ -209,24 +239,22 @@ class Game:
         True
 
 
-def is_regular_season(year, week, game):
+def is_regular_season(year, week):
     year = int(year)
     week = int(week)
-    game = int(game)
 
     return week <= 13
 
 
-def is_postseason(year, week, game):
+def is_postseason(year, week):
     year = int(year)
     week = int(week)
-    game = int(game)
 
     return week > 13
 
 
 def is_consolation(year, week, game):
-    return is_postseason(year, week, game) and not is_playoffs(year, week, game)
+    return is_postseason(year, week) and not is_playoffs(year, week, game)
 
 
 def is_playoffs(year, week, game):

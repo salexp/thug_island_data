@@ -312,6 +312,7 @@ class Records:
         self.overall = {"All": Record()}
         self.playoffs = {"All": Record()}
         self.personal = {"Most PF": [], "Fewest PF": [], "Highest Scoring": [], "Lowest Scoring": []}
+        self.points_finish = {"All": []}
         self.postseason = {"All": Record()}
         self.regular_season = {"All": Record()}
 
@@ -380,6 +381,12 @@ class Record:
         self.ties = 0
         self.pf = 0.0
         self.pa = 0.0
+
+    def average_pa(self):
+        return self.pa / self.all
+
+    def average_pf(self):
+        return self.pf / self.all
 
     def percent(self):
         return (self.wins + 0.5 * self.ties) / float(self.all)

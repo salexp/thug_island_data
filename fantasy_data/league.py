@@ -46,7 +46,7 @@ class League:
         if week is None:
             week = self.years[year].current_week
 
-        rstr = self.years[year].schedule.weeks[week].make_roster()
+        rstr = self.years[year].schedule.weeks[week].records.make_roster()
         rkngs.roster = rstr
 
         for owner in self.owners:
@@ -238,7 +238,7 @@ class League:
                                                                  owner.seasons[self.current_year].record())
 
             body += "\n"
-            rstr = self.years[year].schedule.weeks[week].alltime_roster
+            rstr = self.years[year].schedule.weeks[week].records.alltime_roster
             body += "[b]Team of the Week (Week {})[/b]\n".format(week)
             pos = ["QB", "RB1", "RB2", "WR1", "WR2", "FLX", "TE", "DST", "K"]
             for p, plyr in enumerate([rstr.qb, rstr.rb1, rstr.rb2, rstr.wr1, rstr.wr2, rstr.flx, rstr.te, rstr.dst, rstr.k]):

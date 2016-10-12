@@ -58,7 +58,7 @@ def add_suffix(num):
 
 def average(lst, rnd=1):
     if len(lst) != 0:
-        avg = round(sum(lst) / len(lst), rnd)
+        avg = round(sum([float(i) for i in lst]) / len(lst), rnd)
     else:
         avg = 0
 
