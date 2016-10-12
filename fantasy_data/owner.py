@@ -141,7 +141,7 @@ class Owner:
     def add_team_name(self, name):
         if name not in self.team_names:
             self.team_names.append(name)
-            self.team_names = sorted(self.team_names)
+            # self.team_names = sorted(self.team_names)
 
     def check_personal(self, matchup, number=50):
         rcd = self.records.personal["Most PF"]

@@ -232,10 +232,10 @@ class League:
                 diff = self.rankings[i_last_week].ranks[owner.name] - self.rankings[i_week].ranks[owner.name]
                 diff = "--" if not diff else "+{}".format(diff) if diff > 0 else diff
                 body += "{0} ({1}) [{2:.4f}] {3} ({4})\n".format(rnk[2],
-                                                                diff,
-                                                                rnk[1],
-                                                                owner.name,
-                                                                owner.seasons[self.current_year].record())
+                                                                 diff,
+                                                                 rnk[1],
+                                                                 owner.team_names[-1].encode("utf-8"),
+                                                                 owner.seasons[self.current_year].record())
 
             body += "\n"
             rstr = self.years[year].schedule.weeks[week].alltime_roster
@@ -243,10 +243,10 @@ class League:
             pos = ["QB", "RB1", "RB2", "WR1", "WR2", "FLX", "TE", "DST", "K"]
             for p, plyr in enumerate([rstr.qb, rstr.rb1, rstr.rb2, rstr.wr1, rstr.wr2, rstr.flx, rstr.te, rstr.dst, rstr.k]):
                 body += "{0}. {1} ({2}, {3}) - {4}\n".format(pos[p],
-                                                            plyr.name,
-                                                            plyr.owner.name,
-                                                            "benched" if plyr.slot == "Bench" else "started",
-                                                            plyr.points)
+                                                             plyr.name,
+                                                             plyr.owner.name,
+                                                             "benched" if plyr.slot == "Bench" else "started",
+                                                             plyr.points)
             body += "Total Score: {}\n".format(rstr.starter_points)
 
         if owners:

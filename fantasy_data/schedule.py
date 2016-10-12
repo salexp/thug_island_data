@@ -34,6 +34,7 @@ class Week:
         self.alltime_roster = None
         self.complete = False
         self.league = schedule.league
+        self.records = Records(self)
         self.schedule = schedule
         self.number = wek
         self.year = schedule.year
