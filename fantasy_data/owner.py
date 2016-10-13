@@ -139,9 +139,14 @@ class Owner:
         season.add_matchup(matchup)
 
     def add_team_name(self, name):
-        if name not in self.team_names:
+        # if name not in self.team_names:
+        #     self.team_names.append(name)
+        #     self.team_names = sorted(self.team_names)
+        if len(self.team_names):
+            if name != self.team_names[-1]:
+                self.team_names.append(name)
+        else:
             self.team_names.append(name)
-            # self.team_names = sorted(self.team_names)
 
     def check_personal(self, matchup, number=50):
         rcd = self.records.personal["Most PF"]
@@ -191,6 +196,15 @@ class Owner:
         opt = rcd.optimal
         opt.update_points()
         self.records.alltime_roster = opt
+
+    def first_name(self):
+        return self.name.split(" ")[0].capitalize()
+
+    def initials(self):
+        return self.first_name()[0] + self.last_name()[0]
+
+    def last_name(self):
+        return self.name.split(" ")[1].capitalize()
 
 
 class Matchup:

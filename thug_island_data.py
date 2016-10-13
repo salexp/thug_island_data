@@ -743,7 +743,7 @@ def main():
                                    plyffs=True,
                                    power=True,
                                    seasons=False,
-                                   rcds=25)
+                                   rcds=False)
     print output
     with open("ff_data.txt", "w") as f:
         print >> f, output

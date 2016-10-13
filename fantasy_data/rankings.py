@@ -74,20 +74,21 @@ class Metrics:
             k.append(matchup.roster.k.points)
             bench.append(matchup.roster.bench_points / len(matchup.roster.bench))
             for pg in matchup.roster.bench:
-                plyr = pg.player
-                pts = pg.points
-                if plyr.position == "QB":
-                    qb.append(pts)
-                elif plyr.position == "RB":
-                    rb.append(pts)
-                elif plyr.position == "WR":
-                    wr.append(pts)
-                elif plyr.position == "TE":
-                    te.append(pts)
-                elif plyr.position == "D/ST":
-                    dst.append(pts)
-                elif plyr.position == "K":
-                    k.append(pts)
+                if not pg.bye:
+                    plyr = pg.player
+                    pts = pg.points
+                    if plyr.position == "QB":
+                        qb.append(pts)
+                    elif plyr.position == "RB":
+                        rb.append(pts)
+                    elif plyr.position == "WR":
+                        wr.append(pts)
+                    elif plyr.position == "TE":
+                        te.append(pts)
+                    elif plyr.position == "D/ST":
+                        dst.append(pts)
+                    elif plyr.position == "K":
+                        k.append(pts)
 
             wpct += matchup.won
             pf += matchup.pf

@@ -28,6 +28,7 @@ class Player:
 
 class PlayerGame:
     def __init__(self, player, matchup, info, slot):
+        self.bye = "BYE" in info[2]
         self.matchup = matchup
         self.name = player.name
         self.owner = matchup.owner
@@ -37,7 +38,7 @@ class PlayerGame:
         try:
             self.points = float(info[4])
         except ValueError:
-            self.points = 0
+            self.points = 0.0
 
 
 def get_name(st):

@@ -20,6 +20,7 @@ class League:
         if id is not None:
             self.id = id
             self.url = "http://games.espn.go.com/ffl/leagueoffice?leagueId=%s" % id
+            # http://games.espn.go.com/ffl/leagueoffice?leagueId=190153
 
     def add_schedule(self, year, sheet):
         if not self.years.get(year):
@@ -120,8 +121,7 @@ class League:
             owner = rank[0]
             rkngs.ranks[owner] = r
 
-    def make_historic_playoffs(self):
-        nxt = True
+    def make_historic_playoffs(self, nxt=False):
         most_wins = int(self.current_week) + nxt
         playoffs = {}
         records = ["{}-{}".format(most_wins-i, i) for i in range(most_wins+1)]
@@ -230,7 +230,7 @@ class League:
             for rnk in rnks:
                 owner = self.owners[rnk[0]]
                 diff = self.rankings[i_last_week].ranks[owner.name] - self.rankings[i_week].ranks[owner.name]
-                diff = "--" if not diff else "+{}".format(diff) if diff > 0 else diff
+                diff = " -- " if not diff else "+{}".format(diff) if diff > 0 else " {}".format(diff)
                 body += "{0} ({1}) [{2:.4f}] {3} ({4})\n".format(rnk[2],
                                                                  diff,
                                                                  rnk[1],
@@ -256,23 +256,6 @@ class League:
                 body += self.owners[o].records.to_string()
                 body += "\n"
 
-        if mtchups:
-            body += "\n"
-            week = self.current_week
-            next_week = str(int(week) + 1)
-            year = self.current_year
-
-            owner_ranks = self.rankings[-1].ranks
-
-            body += "[b]Matchup Previews[/b]\n"
-            gms = self.years[year].schedule.weeks[next_week].games
-            for gm in gms:
-                gm.create_preview()
-                body += "[{0}] [u]{1}[/u] at\n".format(owner_ranks[gm.away_owner.name]+1, gm.away_team.encode("utf-8"))
-                body += "[{0}] [u]{1}[/u]\n".format(owner_ranks[gm.home_owner.name]+1, gm.home_team.encode("utf-8"))
-
-                body += "\n"
-
         if plyffs:
             body += "\n"
             plys = self.historic_playoffs
@@ -285,6 +268,51 @@ class League:
                                                                    "{:.0f}".format(rcd[1]) if rcd[1] else "",
                                                                    "s have" if rcd[1] != 1 else " has",
                                                                    r)
+
+        if mtchups:
+            body += "\n"
+            week = self.current_week
+            next_week = str(int(week) + 1)
+            year = self.current_year
+
+            owner_ranks = self.rankings[-1].ranks
+
+            body += "[b]Matchup Previews[/b]\n"
+            gms = self.years[year].schedule.weeks[next_week].games
+            for gm in gms:
+                gm.create_preview()
+                p = gm.preview
+                body += "[{0}] [u]{1}[/u] at\n".format(owner_ranks[gm.away_owner.name]+1, gm.away_team.encode("utf-8"))
+                body += "[{0}] [u]{1}[/u]\n".format(owner_ranks[gm.home_owner.name]+1, gm.home_team.encode("utf-8"))
+                body += "{0}| S:{1}{2:.1f}{1}{3:.0f} ML:{1}{4} O:{5}{6} O/U:{7:.1f}\n".format(
+                    gm.away_owner.initials(),
+                    "+" if p.home_favorite else " ",
+                    p.away_spread,
+                    p.away_payout,
+                    p.away_moneyline,
+                    "+" if p.under_favorite and p.over_payout != 100 else " -" if p.over_payout != 100 else "",
+                    "{:.0f}".format(p.over_payout) if p.over_payout != 100 else "PUSH",
+                    p.ou,)
+                body += "{0}| S:{1}{2:.1f}{1}{3:.0f} ML:{1}{4} U:{5}{6}\n".format(
+                    gm.home_owner.initials(),
+                    "+" if p.away_favorite else " ",
+                    p.home_spread,
+                    p.home_payout,
+                    p.home_moneyline,
+                    "+" if p.over_favorite and p.under_payout != 100 else " -"if p.under_payout != 100 else "",
+                    "{:.0f}".format(p.under_payout) if p.under_payout != 100 else "PUSH",)
+
+                away_opp_rcd = gm.away_owner.records.opponents[gm.home_owner.name]["All"]
+                home_opp_rcd = gm.home_owner.records.opponents[gm.away_owner.name]["All"]
+                away_all = away_opp_rcd.percent() > home_opp_rcd.percent()
+                home_all = away_opp_rcd.percent() < home_opp_rcd.percent()
+                tied_all = away_opp_rcd.percent() == home_opp_rcd.percent()
+                body += "{0} {1} all-time {2}\n".format(
+                    gm.away_owner.first_name() if away_all else gm.home_owner.first_name() if home_all else "Series",
+                    "leads" if not tied_all else "tied",
+                    away_opp_rcd.to_string(pfpa=False) if away_all else home_opp_rcd.to_string(pfpa=False))
+
+                body += "\n"
 
         if rcds:
             if games:
