@@ -181,7 +181,7 @@ class League:
                     if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
-                        if rcd[-1].pf < ownr_season.pf:
+                        if rcd[-1].ppg < ownr_season.ppg:
                             rcd[-1] = ownr_season
                     records[key] = \
                         sorted(rcd, key=lambda param: param.ppg, reverse=True)
@@ -191,7 +191,7 @@ class League:
                     if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
-                        if rcd[-1].pf > ownr_season.pf:
+                        if rcd[-1].ppg > ownr_season.ppg:
                             rcd[-1] = ownr_season
                     records[key] = \
                         sorted(rcd, key=lambda param: param.ppg, reverse=False)
@@ -201,7 +201,7 @@ class League:
                     if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
-                        if rcd[-1].pa < ownr_season.pa:
+                        if rcd[-1].pag < ownr_season.pag:
                             rcd[-1] = ownr_season
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pag, reverse=True)
@@ -211,16 +211,16 @@ class League:
                     if len(rcd) < number:
                         rcd.append(ownr_season)
                     else:
-                        if rcd[-1].pa > ownr_season.pa:
+                        if rcd[-1].pag > ownr_season.pag:
                             rcd[-1] = ownr_season
                     records[key] = \
                         sorted(rcd, key=lambda param: param.pag, reverse=False)
 
     def to_string(self, games=True, mtchups=False, owners=True, plyffs=True, power=True, seasons=True, rcds=10):
-        body = ""
+        week = self.current_week
+        body = "Week {} Computer Rankings and Matchup Previews\n\n".format(int(week)+1)
 
         if power:
-            week = self.current_week
             i_week = int(self.current_week) - 1
             last_week = str(int(week) - 1) if week != "1" else None
             i_last_week = int(last_week) - 1 if last_week is not None else None
@@ -262,12 +262,13 @@ class League:
             body += "[b]Historic Playoff Chances[/b]\n"
             for r in sorted(plys.keys(), reverse=True):
                 rcd = plys[r]
-                body += "{0}: {1}{2}{3} team{4} gone {5}\n".format(r,
-                                                                   "{:.1%}".format(rcd[0] / rcd[1]) if rcd[1] else "No",
-                                                                   ", " if rcd[1] else "",
-                                                                   "{:.0f}".format(rcd[1]) if rcd[1] else "",
-                                                                   "s have" if rcd[1] != 1 else " has",
-                                                                   r)
+                body += "{0}: {1}{2}{3} team{4} gone {5}, {6} made playoffs\n".format(r,
+                    "{:.1%}".format(rcd[0] / rcd[1]) if rcd[1] else "No",
+                    ", " if rcd[1] else "",
+                    "{:.0f}".format(rcd[1]) if rcd[1] else "",
+                    "s have" if rcd[1] != 1 else " has",
+                    r,
+                    rcd[0])
 
         if mtchups:
             body += "\n"

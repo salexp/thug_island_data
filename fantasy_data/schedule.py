@@ -339,20 +339,22 @@ class GamePreview:
 
         diff_a = abs(mx / 100.0 - mu_a)
         diff_h = abs(mx / 100.0 - mu_h)
-        self.away_payout = round(round(((diff_a / (diff_a + diff_h) / 2) * 100 + 100) * 2, -1) / 2 \
-                           * (-1 if self.away_favorite else 1), 0)
-        self.home_payout = round(round(((diff_h / (diff_a + diff_h) / 2) * 100 + 100) * 2, -1) / 2 \
-                           * (-1 if self.home_favorite else 1), 0)
+        self.away_payout = int(round(round(((diff_a / (diff_a + diff_h) / 2) * 100 + 100) * 2, -1) / 2 \
+                           * (-1 if self.away_favorite else 1), 0))
+        self.home_payout = int(round(round(((diff_h / (diff_a + diff_h) / 2) * 100 + 100) * 2, -1) / 2 \
+                           * (-1 if self.home_favorite else 1), 0))
 
-        adjm = 1.0
+        adjm = int(average([abs(n) for n in [self.away_payout, self.home_payout]]) - 100)
         money_lines = [None, None]
         for i, pct in enumerate([pct_a, pct_h]):
             if pct > 0.5:
                 mline = pct / (1.0 - pct) * (-100.0)
             else:
                 mline = (1.0 - pct) / pct * 100
-            mline = int(mline / abs(mline)) * ((abs(mline) - 100) / adjm + 100)
+            mline = int(mline / abs(mline)) * ((abs(mline) - 100) + 100)
             mline = int(round(mline * 2, -1) / 2) if mline != 100 else "PUSH"
+            if mline != "PUSH":
+                mline += abs(mline) / mline * adjm
             money_lines[i] = mline
 
         self.moneyline = average([abs(n) for n in money_lines])

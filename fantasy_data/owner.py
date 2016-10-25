@@ -396,14 +396,21 @@ class Record:
         self.pf = 0.0
         self.pa = 0.0
 
-    def average_pa(self):
+    def pag(self):
         return self.pa / self.all
 
-    def average_pf(self):
+    def ppg(self):
         return self.pf / self.all
 
     def percent(self):
         return (self.wins + 0.5 * self.ties) / float(self.all)
+
+    def record(self):
+        str = "{0:.0f}-{1:.0f}".format(self.wins, self.losses)
+        if self.ties > 0:
+            str += "-{0:.0f}".format(self.ties)
+
+        return str
 
     def to_string(self, wlt=True, pfpa=True):
         str = ""

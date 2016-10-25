@@ -759,6 +759,12 @@ def main():
     game = week.games[gm]
     matchup = owner.games[yr][wk]
     roster = matchup.roster
+    ppg_lst = []
+    pag_lst = []
+    for o in thug_island.owners:
+        rcd = thug_island.owners[o].records.overall["All"]
+        ppg_lst.append([o, rcd.record(), round(rcd.ppg(),1)])
+        pag_lst.append([o, rcd.record(), round(rcd.pag(),1)])
     True
     # team_analysis()
     # draft_history()
