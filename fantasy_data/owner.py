@@ -213,6 +213,7 @@ class Matchup:
         self.away = _away
         self.game = game
         self.home = not _away
+        self.league = game.league
         self.owner_name = game.away_owner_name if _away else game.home_owner_name
         self.record = game.away_record if _away else game.home_record
         self.roster = roster.GameRoster()

@@ -10,6 +10,7 @@ class League:
         self.current_year = None
         self.historic_playoffs = None
         self.league_name = name
+        self.lineup_positions = []
         self.owners = {}
         self.players = {}
         self.power_rankings = {}
@@ -262,13 +263,13 @@ class League:
             body += "[b]Historic Playoff Chances[/b]\n"
             for r in sorted(plys.keys(), reverse=True):
                 rcd = plys[r]
-                body += "{0}: {1}{2}{3} team{4} gone {5}, {6} made playoffs\n".format(r,
+                body += "{0}: {1}{2}{3} team{4} gone {5}{6}\n".format(r,
                     "{:.1%}".format(rcd[0] / rcd[1]) if rcd[1] else "No",
                     ", " if rcd[1] else "",
                     "{:.0f}".format(rcd[1]) if rcd[1] else "",
                     "s have" if rcd[1] != 1 else " has",
                     r,
-                    rcd[0])
+                    ", {} made playoffs".format(rcd[0]) if rcd[1] else "")
 
         if mtchups:
             body += "\n"

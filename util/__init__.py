@@ -1,3 +1,4 @@
+from bisect import bisect
 from itertools import groupby
 from math import exp
 from operator import itemgetter
@@ -147,6 +148,12 @@ def remove_dupes(lst):
     seen = set()
     seen_add = seen.add
     return [x for x in lst if not (x in seen or seen_add(x))]
+
+
+def reverse_bisect(list, x):
+    lst = sorted(list)
+    bsct = bisect(lst, x)
+    return len(list) - bsct
 
 
 def stats(lst):

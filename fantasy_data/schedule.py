@@ -215,12 +215,14 @@ class Game:
             roster = []
             for r in boxscore:
                 plyr = None
+                slot = r[0]
                 if r[1] != "" and "PLAYER" not in r[1]:
-                    slot = r[0]
                     name = player.get_name(r[1])
                     if name not in self.league.players:
                         self.league.players[name] = player.Player(r)
                     plyr = self.league.players[name]
+                elif slot in self.league.lineup_positions and r[4] == "--":
+                    plyr = player.NonePlayer(r)
 
                 if plyr is not None:
                     mtup = self.home_matchup if home else self.away_matchup

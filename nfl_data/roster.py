@@ -1,3 +1,6 @@
+from util import *
+
+
 class GameRoster:
     def __init__(self, opt=False):
         self.qb = None
@@ -94,6 +97,7 @@ class GameRoster:
 
     def make_optimal(self):
         opt = GameRoster(opt=True)
+        other = []
         qbs = []
         if self.qb is not None: qbs += [self.qb]
         rbs = []
@@ -124,6 +128,8 @@ class GameRoster:
                 dsts.append(plyr)
             elif plyr.player.position == "K":
                 ks.append(plyr)
+            elif plyr.player.position == "RB,WR":
+                other.append(plyr)
 
         qbs = sorted(qbs, key=lambda p: p.points, reverse=True)
         rbs = sorted(rbs, key=lambda p: p.points, reverse=True)
@@ -131,6 +137,15 @@ class GameRoster:
         tes = sorted(tes, key=lambda p: p.points, reverse=True)
         dsts = sorted(dsts, key=lambda p: p.points, reverse=True)
         ks = sorted(ks, key=lambda p: p.points, reverse=True)
+
+        if len(other):
+            for plyr in other:
+                rbb = reverse_bisect([p.points for p in rbs], plyr.points)
+                wrb = reverse_bisect([p.points for p in wrs], plyr.points)
+                if rbb < wrb:
+                    rbs.insert(rbb, plyr)
+                else:
+                    wrs.insert(wrb, plyr)
 
         opt.add_player(qbs[0], force="QB")
         qbs = qbs[1:]
