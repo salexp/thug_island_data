@@ -22,7 +22,7 @@ def owner_color(owner):
 
 def computer_rankings(league):
     mx = 0.0
-    fig, ax = plt.subplots(figsize=(14, 7))
+    fig, ax = plt.subplots(figsize=(7, 4))
     week = league.current_week
     power_rankings = league.power_rankings
     owners = [p[0] for p in power_rankings[week]]
@@ -37,14 +37,14 @@ def computer_rankings(league):
         y = [10-r for r in owner_ranks[owner]]
 
         # Plot line
-        ax.plot(x, y, 'o-', lw=1.5, color=owner_color(lo))
-        plt.text(x[-1] + 0.1, y[-1], owner, color=owner_color(lo), fontsize=14)
+        ax.plot(x, y, '.-', lw=1.3, color=owner_color(lo))
+        plt.text(x[-1] + 0.175, y[-1], lo.team_names[-1], color=owner_color(lo), fontsize=9)
 
     # Format axis
-    plt.xlim(3, min([x[-1]+2.5, 13]))
+    plt.xlim(3, min([x[-1]+5.5, 13]))
     plt.ylim(0.5, 10.5)
-    plt.xticks(range(3, 14), fontsize=12)
-    plt.yticks(range(1, 11), [10-r for r in range(11)], fontsize=12)
+    plt.xticks(range(3, 14), fontsize=8)
+    plt.yticks(range(1, 11), [10-r for r in range(11)], fontsize=8)
 
     # Format edges
     ax.yaxis.grid(True, 'major')
@@ -56,8 +56,8 @@ def computer_rankings(league):
     ax.get_yaxis().tick_left()
 
     # Add axis labels and titel
-    plt.xlabel("Week", fontsize=16)
-    plt.ylabel("Computer Rank", fontsize=16)
+    plt.xlabel("Week", fontsize=12)
+    plt.ylabel("Computer Rank", fontsize=12)
 
     # plt.show()
     plt.savefig("computer_rankings", bbox_inches='tight')
