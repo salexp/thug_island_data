@@ -2,6 +2,7 @@ from fantasy_data import rankings
 from fantasy_data import schedule
 from nfl_data import player
 from util import *
+from util import plotter
 
 
 class League:
@@ -41,7 +42,7 @@ class League:
             sheet = book.sheet_by_index(w - 1)
             week.add_details(sheet)
 
-    def generate_rankings(self, year=None, week=None):
+    def generate_rankings(self, year=None, week=None, plot=False):
         rkngs = rankings.Rankings(self)
         if year is None:
             year = max(self.years.keys())
@@ -122,6 +123,9 @@ class League:
             owner = rank[0]
             rkngs.ranks[owner] = r
 
+        if plot:
+            plotter.computer_rankings(self)
+
     def make_historic_playoffs(self, nxt=False):
         most_wins = int(self.current_week) + nxt
         playoffs = {}
@@ -150,7 +154,7 @@ class League:
 
         weeks = [str(w) for w in range(1, int(self.current_week)+1)]
         for week in weeks:
-            self.generate_rankings(week=week)
+            self.generate_rankings(week=week, plot=week is weeks[-1])
 
         self.make_historic_playoffs()
 
