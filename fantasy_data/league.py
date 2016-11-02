@@ -243,6 +243,10 @@ class League:
                                                                  owner.seasons[self.current_year].record())
 
             body += "\n"
+            body += "[b]Rankings Graph[/b]\n"
+            body += "[image][/image]\n"
+
+            body += "\n"
             rstr = self.years[year].schedule.weeks[week].records.alltime_roster
             body += "[b]Team of the Week (Week {})[/b]\n".format(week)
             pos = ["QB", "RB1", "RB2", "WR1", "WR2", "FLX", "TE", "DST", "K"]
