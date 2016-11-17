@@ -362,14 +362,18 @@ class League:
             body += "\n"
             plys = self.future_playoffs
             sims = plys[plys.keys()[0]][2]
-            body += "[b]Playoff Simulations ({} scenerios)[/b]\n".format(sims)
+            body += "[b]Playoff Simulations ({} scenarios)[/b]\n".format(sims)
             owners = plys.keys()
             owners = sorted(owners, key=lambda p: (p[0].upper(), p[1].upper()))
             for owner in owners:
                 rcd = plys[owner]
                 body += "[u]{}[/u]\n".format(owner)
-                body += "{0:.2%} end in division championship\n".format(float(rcd[0]) / float(rcd[2]))
-                body += "{0:.2%} end in playoff berth\n\n".format(float(rcd[1]) / float(rcd[2]))
+                body += "{0}{1} end in division championship\n".format(
+                    "<" if float(rcd[0]) / float(rcd[2]) < 0.0001 and rcd[0] != 0 else "",
+                    "No scenarios" if rcd[0] == 0 else "{0:.2%}".format(float(rcd[0]) / float(rcd[2])))
+                body += "{0}{1} end in playoff berth\n\n".format(
+                    "<" if float(rcd[1]) / float(rcd[2]) < 0.0001 and rcd[1] != 0 else "",
+                    "No scenarios" if rcd[1] == 0 else "{0:.2%}".format(float(rcd[1]) / float(rcd[2])))
 
         if mtchups:
             body += "\n"
