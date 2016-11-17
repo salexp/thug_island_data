@@ -319,6 +319,8 @@ class League:
                                                                        "*" if year in owner.playoffs else "",
                                                                        "*" if year in owner.division_championships else "",
                                                                        owner.seasons[self.current_year].record())
+            body += "** - Clinched division\n"
+            body += "* - Clinched playoffs\n"
 
             body += "\n"
             body += "[b]Rankings Graph[/b]\n"
@@ -360,7 +362,7 @@ class League:
             body += "\n"
             plys = self.future_playoffs
             sims = plys[plys.keys()[0]][2]
-            body += "[b]Playoff Simulations ({} scenerios)\n".format(sims)
+            body += "[b]Playoff Simulations ({} scenerios)[/b]\n".format(sims)
             owners = plys.keys()
             owners = sorted(owners, key=lambda p: (p[0].upper(), p[1].upper()))
             for owner in owners:
