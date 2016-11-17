@@ -1,3 +1,6 @@
+from copy import deepcopy
+from datetime import datetime
+
 from fantasy_data import rankings
 from fantasy_data import schedule
 from nfl_data import player
@@ -10,6 +13,7 @@ class League:
         self.current_week = None
         self.current_year = None
         self.historic_playoffs = None
+        self.future_playoffs = None
         self.league_name = name
         self.lineup_positions = []
         self.owners = {}
@@ -145,6 +149,77 @@ class League:
 
         self.historic_playoffs = playoffs
 
+    def make_future_playoffs(self, all_points=True):
+        t_a = datetime.now()
+        schedule = self.years[self.current_year].schedule
+        weeks_left = schedule.week_list[int(self.current_week):]
+        games_left = [i for s in [schedule.weeks[w].games for w in weeks_left] for i in s]
+        game_outcomes = range(0, 2 ** (len(weeks_left) * len(schedule.weeks[weeks_left[0]].games)))
+        game_outcomes = [bin(g).split('b')[1].zfill(len(weeks_left) * len(schedule.weeks[weeks_left[0]].games))
+                         for g in game_outcomes]
+        # game_outcomes = [bin(g).split('b')[1].zfill(15) for g in range(2**5)]
+        init_records = {}
+        season_finishes = {}
+        for owner in self.owners:
+            w = self.owners[owner].seasons[self.current_year].wins
+            l = self.owners[owner].seasons[self.current_year].losses
+            t = self.owners[owner].seasons[self.current_year].ties
+            pf = self.owners[owner].seasons[self.current_year].ppg
+            d = self.owners[owner].division
+            init_records[owner] = [owner, w, l, t, pf, d]
+            season_finishes[owner] = [0, 0, 0]  # Division, playoffs, total
+
+        for io, outcome in enumerate(game_outcomes):
+            highest_list = [None] if not all_points else ([None] + self.owners.keys())
+            for highest_owner in highest_list:
+                record = deepcopy(init_records)
+                if highest_owner is not None:
+                    record[highest_owner][4] = 999.9
+                for g, game in enumerate(outcome):
+                    away_owner = games_left[g].away_owner.name
+                    home_owner = games_left[g].home_owner.name
+                    record[away_owner][1] += int(game)
+                    record[away_owner][2] += not int(game)
+                    record[home_owner][1] += not int(game)
+                    record[home_owner][2] += int(game)
+
+                finished = [record[o] for o in record]
+                finished = sorted(finished, key=lambda p: (p[1], p[4]), reverse=True)
+
+                # Look for division winners
+                found = {"East": False, "West": False}
+                for i, f in enumerate(finished):
+                    if not found.get(f[5]):
+                        found[f[5]] = f[0]
+                        finished.pop(i)
+                for d in found:
+                    season_finishes[found[d]][0] += 1
+                    season_finishes[found[d]][1] += 1
+                    season_finishes[found[d]][2] += 1
+
+                # Look for wildcards
+                for i, f in enumerate(finished[:4]):
+                    season_finishes[f[0]][1] += 1
+                    season_finishes[f[0]][2] += 1
+
+                # Total remaining
+                for i, f in enumerate(finished[4:]):
+                    season_finishes[f[0]][2] += 1
+            # if int(outcome, 2) % (int(game_outcomes[-1], 2) / 100) == 0:
+            #     t_b = datetime.now()
+            #     t_d = (t_b - t_a).seconds
+            #     print outcome,
+            #     print ": {0}m {1}s: {2:.0%}".format(t_d / 60, t_d % 60, io / float(int(game_outcomes[-1], 2)))
+        self.future_playoffs = season_finishes
+
+        for owner_name in season_finishes:
+            owner = self.owners[owner_name]
+            chc = season_finishes[owner_name]
+            if chc[1] == chc[2]:
+                owner.add_playoff_appearance(self.current_year)
+            if chc[0] == chc[2]:
+                owner.add_division_championship(self.current_year)
+
     def recursive_rankings(self, year=None):
         if year is None:
             year = max(self.years.keys())
@@ -157,6 +232,7 @@ class League:
             self.generate_rankings(week=week, plot=week is weeks[-1])
 
         self.make_historic_playoffs()
+        self.make_future_playoffs()
 
     def search_players(self, name="   ", position="   "):
         found = []
@@ -236,11 +312,13 @@ class League:
                 owner = self.owners[rnk[0]]
                 diff = self.rankings[i_last_week].ranks[owner.name] - self.rankings[i_week].ranks[owner.name]
                 diff = " -- " if not diff else "+{}".format(diff) if diff > 0 else " {}".format(diff)
-                body += "{0} ({1}) [{2:.4f}] {3} ({4})\n".format(rnk[2],
-                                                                 diff,
-                                                                 rnk[1],
-                                                                 owner.team_names[-1].encode("utf-8"),
-                                                                 owner.seasons[self.current_year].record())
+                body += "{0} ({1}) [{2:.4f}] {3}{4}{5} ({6})\n".format(rnk[2],
+                                                                       diff,
+                                                                       rnk[1],
+                                                                       owner.team_names[-1].rstrip().encode("utf-8"),
+                                                                       "*" if year in owner.playoffs else "",
+                                                                       "*" if year in owner.division_championships else "",
+                                                                       owner.seasons[self.current_year].record())
 
             body += "\n"
             body += "[b]Rankings Graph[/b]\n"
@@ -269,7 +347,7 @@ class League:
             body += "\n"
             plys = self.historic_playoffs
             body += "[b]Historic Playoff Chances[/b]\n"
-            for r in sorted(plys.keys(), reverse=True):
+            for r in sorted(plys.keys(), key=lambda p: int(p.split('-')[0]), reverse=True):
                 rcd = plys[r]
                 body += "{0}: {1}{2}{3} team{4} gone {5}{6}\n".format(r,
                     "{:.1%}".format(rcd[0] / rcd[1]) if rcd[1] else "No",
@@ -278,6 +356,18 @@ class League:
                     "s have" if rcd[1] != 1 else " has",
                     r,
                     ", {} made playoffs".format(rcd[0]) if rcd[1] else "")
+
+            body += "\n"
+            plys = self.future_playoffs
+            sims = plys[plys.keys()[0]][2]
+            body += "[b]Playoff Simulations ({} scenerios)\n".format(sims)
+            owners = plys.keys()
+            owners = sorted(owners, key=lambda p: (p[0].upper(), p[1].upper()))
+            for owner in owners:
+                rcd = plys[owner]
+                body += "[u]{}[/u]\n".format(owner)
+                body += "{0:.2%} end in division championship\n".format(float(rcd[0]) / float(rcd[2]))
+                body += "{0:.2%} end in playoff berth\n\n".format(float(rcd[1]) / float(rcd[2]))
 
         if mtchups:
             body += "\n"

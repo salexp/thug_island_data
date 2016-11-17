@@ -43,7 +43,7 @@ def computer_rankings(league):
     # Format axis
     plt.xlim(3, min([x[-1]+5.5, 13]))
     plt.ylim(0.5, 10.5)
-    plt.xticks(range(3, 14), fontsize=8)
+    plt.xticks(range(4, 14), fontsize=8)
     plt.yticks(range(1, 11), [10-r for r in range(11)], fontsize=8)
 
     # Format edges

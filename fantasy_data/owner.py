@@ -23,6 +23,7 @@ class Owner:
         self.championships = []
         self.championship_games = []
         self.division = divisions[name]
+        self.division_championships = []
         self.games = {}
         self.league = league
         self.name = name
@@ -124,6 +125,11 @@ class Owner:
         if year not in self.championships:
             self.championships.append(year)
             self.championships = sorted(self.championships)
+
+    def add_division_championship(self, year):
+        if year not in self.division_championships:
+            self.division_championships.append(year)
+            self.division_championships = sorted(self.division_championships)
 
     def add_playoff_appearance(self, year):
         if year not in self.playoffs:
@@ -247,6 +253,7 @@ class Matchup:
 class OwnerSeason:
     def __init__(self, owner, matchup):
         self.championship = False
+        self.division = False
         self.games = 0
         self.losses = 0
         self.matchups = []
@@ -286,15 +293,6 @@ class OwnerSeason:
             str += "-{0:.0f}".format(self.ties)
 
         return str
-
-    def playoff_chances(self):
-        # 32 bit Python can only support recursion after week 8
-        # 2^(5*5) = 33.5M
-        # 2^(5*4) = 1.0M
-        # 2^(5*3) = 32.7k
-        # 2^(5*2) = 1024
-        # 2^(5*1) = 32
-        True
 
 
 class Attributes:
