@@ -137,8 +137,9 @@ class League:
         for r in records:
             playoffs[r] = [0, 0.0]
 
-        seasons = []
-        for y in self.years:
+        seasons = [y for y in self.years]
+        seasons.remove(self.current_year)
+        for y in seasons:
             owner_seasons = self.years[y].owner_seasons
             for s in owner_seasons:
                 ows = owner_seasons[s]
@@ -157,7 +158,7 @@ class League:
         game_outcomes = range(0, 2 ** (len(weeks_left) * len(schedule.weeks[weeks_left[0]].games)))
         game_outcomes = [bin(g).split('b')[1].zfill(len(weeks_left) * len(schedule.weeks[weeks_left[0]].games))
                          for g in game_outcomes]
-        # game_outcomes = [bin(g).split('b')[1].zfill(15) for g in range(2**5)]
+        game_outcomes = [bin(g).split('b')[1].zfill(15) for g in range(2**5)]
         init_records = {}
         season_finishes = {}
         for owner in self.owners:
@@ -170,7 +171,7 @@ class League:
             season_finishes[owner] = [0, 0, 0]  # Division, playoffs, total
 
         for io, outcome in enumerate(game_outcomes):
-            highest_list = [None] if not all_points else ([None] + self.owners.keys())
+            highest_list = [None] if not all_points else self.owners.keys()
             for highest_owner in highest_list:
                 record = deepcopy(init_records)
                 if highest_owner is not None:

@@ -33,7 +33,7 @@ def computer_rankings(league):
         for i in range(2, int(week)):
             owner_ranks[owner].append(league.rankings[i].ranks[owner])
 
-        x = [i+1 for i in range(2, int(week))]
+        x = [i+2 for i in range(2, int(week))]
         y = [10-r for r in owner_ranks[owner]]
 
         # Plot line
@@ -41,7 +41,7 @@ def computer_rankings(league):
         plt.text(x[-1] + 0.175, y[-1], lo.team_names[-1], color=owner_color(lo), fontsize=9)
 
     # Format axis
-    plt.xlim(3, min([x[-1]+5.5, 13]))
+    plt.xlim(4, min([x[-1]+5.5, 13]))
     plt.ylim(0.5, 10.5)
     plt.xticks(range(4, 14), fontsize=8)
     plt.yticks(range(1, 11), [10-r for r in range(11)], fontsize=8)
