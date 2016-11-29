@@ -158,7 +158,7 @@ class League:
         game_outcomes = range(0, 2 ** (len(weeks_left) * len(schedule.weeks[weeks_left[0]].games)))
         game_outcomes = [bin(g).split('b')[1].zfill(len(weeks_left) * len(schedule.weeks[weeks_left[0]].games))
                          for g in game_outcomes]
-        game_outcomes = [bin(g).split('b')[1].zfill(15) for g in range(2**5)]
+        # game_outcomes = [bin(g).split('b')[1].zfill(15) for g in range(2**5)]
         init_records = {}
         season_finishes = {}
         for owner in self.owners:
